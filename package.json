@@ -12,7 +12,8 @@
     "start": "next start -p $PORT",
     "lint": "next lint",
     "db:migrate": "tsx scripts/migrate.ts",
-    "db:seed": "tsx scripts/seed.ts"
+    "db:seed": "tsx scripts/seed.ts",
+    "db:status": "tsx scripts/migration-status.ts"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",

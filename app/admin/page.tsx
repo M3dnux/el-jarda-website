@@ -107,8 +107,19 @@ export default function AdminPage() {
             </button>
           </form>
           
-          <div className="mt-4 text-center">
+          <div className="mt-6 flex flex-col items-center space-y-3">
             <ForgotPasswordLink />
+            <div className="border-t w-full pt-4">
+              <button
+                onClick={() => router.push('/')}
+                className="w-full text-gray-600 hover:text-gray-900 text-sm flex items-center justify-center space-x-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                <span>Retour à l'accueil</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -124,9 +135,12 @@ export default function AdminPage() {
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => router.push('/')}
-                className="text-gray-600 hover:text-gray-900"
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md transition-colors"
               >
-                Retour au site
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span>Retour au site</span>
               </button>
               <button
                 onClick={handleLogout}
@@ -211,6 +225,8 @@ function ProductsManager() {
   const [categories, setCategories] = useState([])
   const [showForm, setShowForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [imagePreview, setImagePreview] = useState('')
   const [formData, setFormData] = useState({
     name_fr: '',
     name_ar: '',
@@ -227,6 +243,52 @@ function ProductsManager() {
     fetchProducts()
     fetchCategories()
   }, [])
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setFormData(prev => ({ ...prev, image_url: data.imageUrl }))
+        setImagePreview(data.imageUrl)
+        toast.success('Image téléchargée avec succès!')
+      } else {
+        toast.error(data.error || 'Erreur lors du téléchargement')
+      }
+    } catch (error) {
+      toast.error('Erreur lors du téléchargement de l\'image')
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const resetForm = () => {
+    setFormData({
+      name_fr: '',
+      name_ar: '',
+      description_fr: '',
+      description_ar: '',
+      price: '',
+      category_id: '',
+      stock: '',
+      reference: '',
+      image_url: ''
+    })
+    setImagePreview('')
+  }
 
   const fetchProducts = async () => {
     try {
@@ -272,17 +334,7 @@ function ProductsManager() {
         toast.success('Produit ajouté avec succès!')
         fetchProducts()
         setShowForm(false)
-        setFormData({
-          name_fr: '',
-          name_ar: '',
-          description_fr: '',
-          description_ar: '',
-          price: '',
-          category_id: '',
-          stock: '',
-          reference: '',
-          image_url: ''
-        })
+        resetForm()
       } else {
         toast.error('Erreur lors de l\'ajout du produit')
       }
@@ -422,14 +474,32 @@ function ProductsManager() {
             
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                URL de l'image (optionnel)
+                Image du produit (optionnel)
               </label>
-              <input
-                type="url"
-                value={formData.image_url}
-                onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                className="input-field"
-              />
+              <div className="space-y-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="input-field"
+                  disabled={uploading}
+                />
+                {uploading && (
+                  <div className="flex items-center text-blue-600">
+                    <div className="loader w-4 h-4 mr-2"></div>
+                    Upload en cours...
+                  </div>
+                )}
+                {imagePreview && (
+                  <div className="mt-4">
+                    <img 
+                      src={imagePreview} 
+                      alt="Aperçu" 
+                      className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
             
             <div className="md:col-span-2 flex space-x-4">
@@ -438,7 +508,21 @@ function ProductsManager() {
               </button>
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={() => {
+                  setShowForm(false)
+                  setImagePreview('')
+                  setFormData({
+                    name_fr: '',
+                    name_ar: '',
+                    description_fr: '',
+                    description_ar: '',
+                    price: '',
+                    category_id: '',
+                    stock: '',
+                    reference: '',
+                    image_url: ''
+                  })
+                }}
                 className="btn-secondary"
               >
                 Annuler
