@@ -2,9 +2,20 @@ import sql from '../lib/db'
 
 export async function createTables() {
   try {
+    console.log('Dropping existing tables...')
+    
+    // Drop tables in reverse order to handle foreign key constraints
+    await sql`DROP TABLE IF EXISTS contact_messages CASCADE`
+    await sql`DROP TABLE IF EXISTS products CASCADE`
+    await sql`DROP TABLE IF EXISTS categories CASCADE`
+    await sql`DROP TABLE IF EXISTS users CASCADE`
+    await sql`DROP TABLE IF EXISTS settings CASCADE`
+    
+    console.log('Creating fresh tables...')
+    
     // Create settings table for configuration
     await sql`
-      CREATE TABLE IF NOT EXISTS settings (
+      CREATE TABLE settings (
         id SERIAL PRIMARY KEY,
         key VARCHAR(255) UNIQUE NOT NULL,
         value TEXT,
@@ -16,7 +27,7 @@ export async function createTables() {
 
     // Create users table
     await sql`
-      CREATE TABLE IF NOT EXISTS users (
+      CREATE TABLE users (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
@@ -30,7 +41,7 @@ export async function createTables() {
 
     // Create categories table
     await sql`
-      CREATE TABLE IF NOT EXISTS categories (
+      CREATE TABLE categories (
         id SERIAL PRIMARY KEY,
         name_fr VARCHAR(255) NOT NULL,
         name_ar VARCHAR(255) NOT NULL,
@@ -43,7 +54,7 @@ export async function createTables() {
 
     // Create products table
     await sql`
-      CREATE TABLE IF NOT EXISTS products (
+      CREATE TABLE products (
         id SERIAL PRIMARY KEY,
         name_fr VARCHAR(255) NOT NULL,
         name_ar VARCHAR(255) NOT NULL,
@@ -61,7 +72,7 @@ export async function createTables() {
 
     // Create contact_messages table
     await sql`
-      CREATE TABLE IF NOT EXISTS contact_messages (
+      CREATE TABLE contact_messages (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
