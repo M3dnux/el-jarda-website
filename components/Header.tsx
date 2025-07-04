@@ -71,7 +71,7 @@ export default function Header({ language, setLanguage }: HeaderProps) {
               alt="El Jarda Logo" 
               width={50} 
               height={50}
-              className="rounded-full"
+              className="rounded-full w-12 h-12"
             />
             <span className={`text-2xl font-bold text-primary-700 ${language === 'ar' ? 'arabic-text' : ''}`}>{siteName}</span>
           </Link>
