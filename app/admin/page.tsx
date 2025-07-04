@@ -227,6 +227,7 @@ function ProductsManager() {
   const [editingProduct, setEditingProduct] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [imagePreview, setImagePreview] = useState('')
+  const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [formData, setFormData] = useState({
     name_fr: '',
     name_ar: '',
@@ -288,6 +289,47 @@ function ProductsManager() {
       image_url: ''
     })
     setImagePreview('')
+    setEditingProduct(null)
+  }
+
+  const handleEditProduct = (product) => {
+    setEditingProduct(product)
+    setFormData({
+      name_fr: product.name_fr,
+      name_ar: product.name_ar,
+      description_fr: product.description_fr,
+      description_ar: product.description_ar,
+      price: product.price.toString(),
+      category_id: product.category_id.toString(),
+      stock: product.stock.toString(),
+      reference: product.reference,
+      image_url: product.image_url || ''
+    })
+    setImagePreview(product.image_url || '')
+    setShowForm(true)
+  }
+
+  const handleDeleteProduct = async (productId) => {
+    if (deleteConfirm !== productId) {
+      setDeleteConfirm(productId)
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/products/${productId}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        toast.success('Produit supprimé avec succès!')
+        fetchProducts()
+        setDeleteConfirm(null)
+      } else {
+        toast.error('Erreur lors de la suppression du produit')
+      }
+    } catch (error) {
+      toast.error('Erreur lors de la suppression du produit')
+    }
   }
 
   const fetchProducts = async () => {
@@ -318,8 +360,11 @@ function ProductsManager() {
     e.preventDefault()
     
     try {
-      const response = await fetch('/api/products', {
-        method: 'POST',
+      const url = editingProduct ? `/api/products/${editingProduct.id}` : '/api/products'
+      const method = editingProduct ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -331,15 +376,16 @@ function ProductsManager() {
       })
 
       if (response.ok) {
-        toast.success('Produit ajouté avec succès!')
+        toast.success(editingProduct ? 'Produit modifié avec succès!' : 'Produit ajouté avec succès!')
         fetchProducts()
         setShowForm(false)
+        setEditingProduct(null)
         resetForm()
       } else {
-        toast.error('Erreur lors de l\'ajout du produit')
+        toast.error(editingProduct ? 'Erreur lors de la modification du produit' : 'Erreur lors de l\'ajout du produit')
       }
     } catch (error) {
-      toast.error('Erreur lors de l\'ajout du produit')
+      toast.error(editingProduct ? 'Erreur lors de la modification du produit' : 'Erreur lors de l\'ajout du produit')
     }
   }
 
@@ -358,7 +404,7 @@ function ProductsManager() {
       {showForm && (
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Nouveau Produit
+            {editingProduct ? 'Modifier le Produit' : 'Nouveau Produit'}
           </h3>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -504,24 +550,14 @@ function ProductsManager() {
             
             <div className="md:col-span-2 flex space-x-4">
               <button type="submit" className="btn-primary">
-                Ajouter le produit
+                {editingProduct ? 'Modifier le produit' : 'Ajouter le produit'}
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setShowForm(false)
-                  setImagePreview('')
-                  setFormData({
-                    name_fr: '',
-                    name_ar: '',
-                    description_fr: '',
-                    description_ar: '',
-                    price: '',
-                    category_id: '',
-                    stock: '',
-                    reference: '',
-                    image_url: ''
-                  })
+                  setEditingProduct(null)
+                  resetForm()
                 }}
                 className="btn-secondary"
               >
@@ -554,6 +590,9 @@ function ProductsManager() {
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Référence
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
               </th>
             </tr>
           </thead>
@@ -605,6 +644,34 @@ function ProductsManager() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {product.reference}
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleEditProduct(product)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProduct(product.id)}
+                      className={`${
+                        deleteConfirm === product.id 
+                          ? 'text-red-800 bg-red-100 px-2 py-1 rounded' 
+                          : 'text-red-600 hover:text-red-900'
+                      }`}
+                    >
+                      {deleteConfirm === product.id ? (
+                        <span className="text-xs">Confirmer?</span>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -617,6 +684,8 @@ function ProductsManager() {
 function CategoriesManager() {
   const [categories, setCategories] = useState([])
   const [showForm, setShowForm] = useState(false)
+  const [editingCategory, setEditingCategory] = useState(null)
+  const [deleteConfirm, setDeleteConfirm] = useState(null)
   const [formData, setFormData] = useState({
     name_fr: '',
     name_ar: '',
@@ -644,8 +713,11 @@ function CategoriesManager() {
     e.preventDefault()
     
     try {
-      const response = await fetch('/api/categories', {
-        method: 'POST',
+      const url = editingCategory ? `/api/categories/${editingCategory.id}` : '/api/categories'
+      const method = editingCategory ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -653,9 +725,10 @@ function CategoriesManager() {
       })
 
       if (response.ok) {
-        toast.success('Catégorie ajoutée avec succès!')
+        toast.success(editingCategory ? 'Catégorie modifiée avec succès!' : 'Catégorie ajoutée avec succès!')
         fetchCategories()
         setShowForm(false)
+        setEditingCategory(null)
         setFormData({
           name_fr: '',
           name_ar: '',
@@ -663,10 +736,44 @@ function CategoriesManager() {
           description_ar: ''
         })
       } else {
-        toast.error('Erreur lors de l\'ajout de la catégorie')
+        toast.error(editingCategory ? 'Erreur lors de la modification de la catégorie' : 'Erreur lors de l\'ajout de la catégorie')
       }
     } catch (error) {
-      toast.error('Erreur lors de l\'ajout de la catégorie')
+      toast.error(editingCategory ? 'Erreur lors de la modification de la catégorie' : 'Erreur lors de l\'ajout de la catégorie')
+    }
+  }
+
+  const handleEditCategory = (category) => {
+    setEditingCategory(category)
+    setFormData({
+      name_fr: category.name_fr,
+      name_ar: category.name_ar,
+      description_fr: category.description_fr || '',
+      description_ar: category.description_ar || ''
+    })
+    setShowForm(true)
+  }
+
+  const handleDeleteCategory = async (categoryId) => {
+    if (deleteConfirm !== categoryId) {
+      setDeleteConfirm(categoryId)
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/categories/${categoryId}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        toast.success('Catégorie supprimée avec succès!')
+        fetchCategories()
+        setDeleteConfirm(null)
+      } else {
+        toast.error('Erreur lors de la suppression de la catégorie')
+      }
+    } catch (error) {
+      toast.error('Erreur lors de la suppression de la catégorie')
     }
   }
 
@@ -685,7 +792,7 @@ function CategoriesManager() {
       {showForm && (
         <div className="bg-white p-6 rounded-lg shadow">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Nouvelle Catégorie
+            {editingCategory ? 'Modifier la Catégorie' : 'Nouvelle Catégorie'}
           </h3>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -740,11 +847,20 @@ function CategoriesManager() {
             
             <div className="md:col-span-2 flex space-x-4">
               <button type="submit" className="btn-primary">
-                Ajouter la catégorie
+                {editingCategory ? 'Modifier la catégorie' : 'Ajouter la catégorie'}
               </button>
               <button
                 type="button"
-                onClick={() => setShowForm(false)}
+                onClick={() => {
+                  setShowForm(false)
+                  setEditingCategory(null)
+                  setFormData({
+                    name_fr: '',
+                    name_ar: '',
+                    description_fr: '',
+                    description_ar: ''
+                  })
+                }}
                 className="btn-secondary"
               >
                 Annuler
@@ -764,6 +880,9 @@ function CategoriesManager() {
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Description
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
               </th>
             </tr>
           </thead>
@@ -788,6 +907,34 @@ function CategoriesManager() {
                     <div className="text-sm text-gray-600 arabic-text">
                       <span className="font-medium">AR:</span> {category.description_ar}
                     </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleEditCategory(category)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => handleDeleteCategory(category.id)}
+                      className={`${
+                        deleteConfirm === category.id 
+                          ? 'text-red-800 bg-red-100 px-2 py-1 rounded' 
+                          : 'text-red-600 hover:text-red-900'
+                      }`}
+                    >
+                      {deleteConfirm === category.id ? (
+                        <span className="text-xs">Confirmer?</span>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      )}
+                    </button>
                   </div>
                 </td>
               </tr>
