@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://eljarda.com/sitemap.xml
+
+# Disallow admin area
+Disallow: /admin/
+
+# Allow important pages
+Allow: /
+Allow: /api/products
+Allow: /api/categories
+Allow: /api/contact
