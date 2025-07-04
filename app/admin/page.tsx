@@ -130,21 +130,22 @@ export default function AdminPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl font-semibold text-gray-900">Administration El Jarda</h1>
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center py-4 sm:py-0 sm:h-16 space-y-3 sm:space-y-0">
+            <h1 className="text-lg sm:text-xl font-semibold text-gray-900">Administration El Jarda</h1>
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
               <button
                 onClick={() => router.push('/')}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md transition-colors"
+                className="flex items-center justify-center space-x-2 text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md transition-colors w-full sm:w-auto"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-                <span>Retour au site</span>
+                <span className="hidden sm:inline">Retour au site</span>
+                <span className="sm:hidden">Accueil</span>
               </button>
               <button
                 onClick={handleLogout}
-                className="btn-secondary"
+                className="btn-secondary w-full sm:w-auto"
               >
                 Déconnexion
               </button>
@@ -166,11 +167,11 @@ function AdminDashboard() {
   return (
     <div>
       {/* Tab Navigation */}
-      <div className="mb-8">
-        <nav className="flex space-x-8">
+      <div className="mb-8 border-b border-gray-200">
+        <nav className="flex flex-wrap -mb-px space-x-2 sm:space-x-8 overflow-x-auto">
           <button
             onClick={() => setActiveTab('products')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm ${
+            className={`pb-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
               activeTab === 'products'
                 ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -180,7 +181,7 @@ function AdminDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('categories')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm ${
+            className={`pb-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
               activeTab === 'categories'
                 ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -190,7 +191,7 @@ function AdminDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('messages')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm ${
+            className={`pb-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
               activeTab === 'messages'
                 ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -200,7 +201,7 @@ function AdminDashboard() {
           </button>
           <button
             onClick={() => setActiveTab('password')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm ${
+            className={`pb-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
               activeTab === 'password'
                 ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -397,49 +398,51 @@ function ProductsManager() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Gestion des Produits</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Gestion des Produits</h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="btn-primary"
+          className="btn-primary w-full sm:w-auto"
         >
           Ajouter un produit
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             {editingProduct ? 'Modifier le Produit' : 'Nouveau Produit'}
           </h3>
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom (Français)
-              </label>
-              <input
-                type="text"
-                value={formData.name_fr}
-                onChange={(e) => setFormData({ ...formData, name_fr: e.target.value })}
-                className="input-field"
-                required
-              />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom (Français)
+                </label>
+                <input
+                  type="text"
+                  value={formData.name_fr}
+                  onChange={(e) => setFormData({ ...formData, name_fr: e.target.value })}
+                  className="input-field"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom (Arabe)
+                </label>
+                <input
+                  type="text"
+                  value={formData.name_ar}
+                  onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
+                  className="input-field arabic-text"
+                  required
+                />
+              </div>
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom (Arabe)
-              </label>
-              <input
-                type="text"
-                value={formData.name_ar}
-                onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
-                className="input-field arabic-text"
-                required
-              />
-            </div>
-            
-            <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Description (Français)
               </label>
@@ -563,8 +566,8 @@ function ProductsManager() {
               </div>
             </div>
             
-            <div className="md:col-span-2 flex space-x-4">
-              <button type="submit" className="btn-primary">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+              <button type="submit" className="btn-primary w-full sm:w-auto">
                 {editingProduct ? 'Modifier le produit' : 'Ajouter le produit'}
               </button>
               <button
@@ -574,7 +577,7 @@ function ProductsManager() {
                   setEditingProduct(null)
                   resetForm()
                 }}
-                className="btn-secondary"
+                className="btn-secondary w-full sm:w-auto"
               >
                 Annuler
               </button>
@@ -585,36 +588,38 @@ function ProductsManager() {
 
       {/* Products List */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Produit
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Description
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Prix
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Stock
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Catégorie
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Référence
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Image
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+        {/* Desktop Table */}
+        <div className="hidden lg:block">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Produit
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Prix
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Stock
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Catégorie
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Référence
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Image
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
             {products.map((product) => (
               <tr key={product.id}>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -714,6 +719,100 @@ function ProductsManager() {
             ))}
           </tbody>
         </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="lg:hidden">
+          {products.map((product) => (
+            <div key={product.id} className="border-b border-gray-200 p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-3 mb-2">
+                    {product.image_url ? (
+                      <img 
+                        src={product.image_url} 
+                        alt="Product"
+                        className="h-12 w-12 object-cover rounded"
+                        onError={(e) => {
+                          console.error('Failed to load product image for product:', product.name_fr);
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <div className="h-12 w-12 bg-gray-200 rounded flex items-center justify-center">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-900">{product.name_fr}</h3>
+                      <p className="text-sm text-gray-500 arabic-text">{product.name_ar}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium text-gray-500">Prix:</span>
+                      <p className="text-gray-900">{product.price} TND</p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-500">Stock:</span>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        product.stock > 0 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {product.stock}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-500">Catégorie:</span>
+                      <p className="text-gray-900">{product.category_name_fr || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-500">Référence:</span>
+                      <p className="text-gray-900">{product.reference}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-2">
+                    <span className="font-medium text-gray-500">Description:</span>
+                    <p className="text-sm text-gray-900 mt-1">{product.description_fr}</p>
+                    <p className="text-sm text-gray-600 arabic-text mt-1">{product.description_ar}</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col space-y-2 ml-4">
+                  <button
+                    onClick={() => handleEditProduct(product)}
+                    className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleDeleteProduct(product.id)}
+                    className={`p-2 rounded ${
+                      deleteConfirm === product.id 
+                        ? 'text-red-800 bg-red-100' 
+                        : 'text-red-600 hover:text-red-900 hover:bg-red-50'
+                    }`}
+                  >
+                    {deleteConfirm === product.id ? (
+                      <span className="text-xs">OK?</span>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -910,15 +1009,17 @@ function CategoriesManager() {
 
       {/* Categories List */}
       <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nom de la Catégorie
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Description
-              </th>
+        {/* Desktop Table */}
+        <div className="hidden md:block">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Nom de la Catégorie
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
@@ -979,6 +1080,56 @@ function CategoriesManager() {
             ))}
           </tbody>
         </table>
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="md:hidden">
+          {categories.map((category) => (
+            <div key={category.id} className="border-b border-gray-200 p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="mb-3">
+                    <h3 className="text-sm font-medium text-gray-900">{category.name_fr}</h3>
+                    <p className="text-sm text-gray-500 arabic-text">{category.name_ar}</p>
+                  </div>
+                  
+                  <div className="text-sm">
+                    <span className="font-medium text-gray-500">Description:</span>
+                    <p className="text-gray-900 mt-1">{category.description_fr}</p>
+                    <p className="text-gray-600 arabic-text mt-1">{category.description_ar}</p>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col space-y-2 ml-4">
+                  <button
+                    onClick={() => handleEditCategory(category)}
+                    className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleDeleteCategory(category.id)}
+                    className={`p-2 rounded ${
+                      deleteConfirm === category.id 
+                        ? 'text-red-800 bg-red-100' 
+                        : 'text-red-600 hover:text-red-900 hover:bg-red-50'
+                    }`}
+                  >
+                    {deleteConfirm === category.id ? (
+                      <span className="text-xs">OK?</span>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
