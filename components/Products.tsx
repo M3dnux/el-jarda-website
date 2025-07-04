@@ -8,7 +8,7 @@ interface Product {
   name_ar: string
   description_fr: string
   description_ar: string
-  price: number
+  price: number | string
   stock: number
   image_url: string
   reference: string
@@ -90,7 +90,7 @@ export default function Products({ language }: ProductsProps) {
                   </p>
                   <div className="flex justify-between items-center">
                     <span className={`text-green-600 font-bold text-lg ${isArabic ? 'arabic-text' : ''}`}>
-                      {product.price.toFixed(2)} DT
+                      {Number(product.price).toFixed(2)} DT
                     </span>
                     {product.stock > 0 ? (
                       <span className={`text-green-500 text-sm ${isArabic ? 'arabic-text' : ''}`}>

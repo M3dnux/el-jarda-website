@@ -457,6 +457,9 @@ function ProductsManager() {
                 Produit
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Description
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Prix
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -476,10 +479,20 @@ function ProductsManager() {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div>
                     <div className="text-sm font-medium text-gray-900">
-                      {product.name_fr}
+                      FR: {product.name_fr}
                     </div>
                     <div className="text-sm text-gray-500 arabic-text">
-                      {product.name_ar}
+                      AR: {product.name_ar}
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div>
+                    <div className="text-sm text-gray-900 mb-1">
+                      <span className="font-medium">FR:</span> {product.description_fr}
+                    </div>
+                    <div className="text-sm text-gray-600 arabic-text">
+                      <span className="font-medium">AR:</span> {product.description_ar}
                     </div>
                   </div>
                 </td>
@@ -495,8 +508,15 @@ function ProductsManager() {
                     {product.stock}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {product.category_name_fr}
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div>
+                    <div className="text-sm text-gray-900">
+                      FR: {product.category_name_fr}
+                    </div>
+                    <div className="text-sm text-gray-600 arabic-text">
+                      AR: {product.category_name_ar}
+                    </div>
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {product.reference}
@@ -656,10 +676,7 @@ function CategoriesManager() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nom Français
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nom Arabe
+                Nom de la Catégorie
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Description
@@ -669,14 +686,25 @@ function CategoriesManager() {
           <tbody className="bg-white divide-y divide-gray-200">
             {categories.map((category) => (
               <tr key={category.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {category.name_fr}
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">
+                      FR: {category.name_fr}
+                    </div>
+                    <div className="text-sm text-gray-500 arabic-text">
+                      AR: {category.name_ar}
+                    </div>
+                  </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 arabic-text">
-                  {category.name_ar}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500">
-                  {category.description_fr}
+                <td className="px-6 py-4">
+                  <div>
+                    <div className="text-sm text-gray-900 mb-1">
+                      <span className="font-medium">FR:</span> {category.description_fr}
+                    </div>
+                    <div className="text-sm text-gray-600 arabic-text">
+                      <span className="font-medium">AR:</span> {category.description_ar}
+                    </div>
+                  </div>
                 </td>
               </tr>
             ))}
