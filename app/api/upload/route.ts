@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile } from 'fs/promises'
-import { join } from 'path'
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,55 +15,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid file type. Only images are allowed.' }, { status: 400 })
     }
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024 // 5MB
+    // Validate file size (max 2MB for database storage)
+    const maxSize = 2 * 1024 * 1024 // 2MB
     if (file.size > maxSize) {
-      return NextResponse.json({ error: 'File too large. Maximum size is 5MB.' }, { status: 400 })
+      return NextResponse.json({ error: 'File too large. Maximum size is 2MB for database storage.' }, { status: 400 })
     }
 
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-
-    // Generate unique filename
-    const timestamp = Date.now()
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_')
-    const filename = `${timestamp}_${originalName}`
     
-    // Save to public/uploads directory
-    const uploadDir = join(process.cwd(), 'public', 'uploads')
-    const filePath = join(uploadDir, filename)
+    // Convert to base64
+    const base64Data = buffer.toString('base64')
+    const mimeType = file.type
+    const imageDataUrl = `data:${mimeType};base64,${base64Data}`
     
-    // Create uploads directory if it doesn't exist
-    try {
-      const fs = require('fs')
-      if (!fs.existsSync(uploadDir)) {
-        console.log('Creating uploads directory:', uploadDir)
-        fs.mkdirSync(uploadDir, { recursive: true })
-      }
-      
-      console.log('Writing file to:', filePath)
-      await writeFile(filePath, buffer)
-      console.log('File written successfully')
-    } catch (error) {
-      console.error('Error writing file:', error)
-      return NextResponse.json({ 
-        error: 'Failed to save file to server', 
-        details: error.message 
-      }, { status: 500 })
-    }
-
-    // Return the URL that can be used to access the image
-    const imageUrl = `/uploads/${filename}`
-    console.log('Image uploaded successfully. URL:', imageUrl)
+    console.log('Image converted to base64, size:', base64Data.length, 'bytes')
     
+    // Return the base64 data URL that can be stored directly in database
     return NextResponse.json({ 
-      message: 'Image uploaded successfully',
-      imageUrl: imageUrl,
-      filename: filename 
+      message: 'Image processed successfully',
+      imageUrl: imageDataUrl,
+      originalName: file.name,
+      size: file.size,
+      type: file.type
     })
 
   } catch (error) {
-    console.error('Error uploading file:', error)
-    return NextResponse.json({ error: 'Failed to upload file' }, { status: 500 })
+    console.error('Error processing image:', error)
+    return NextResponse.json({ error: 'Failed to process image' }, { status: 500 })
   }
 }

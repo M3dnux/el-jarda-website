@@ -312,6 +312,23 @@ export async function runSchemaUpdates() {
       await markMigrationApplied('1.4.0', 'Added metadata and display columns to products table')
     }
 
+    // Version 1.5.0: Change image_url column to store base64 image data
+    if (!(await migrationApplied('1.5.0'))) {
+      console.log('Running migration 1.5.0: Changing image_url to store base64 data...')
+      
+      if (await tableExists('products')) {
+        // Change the column type to TEXT to store base64 data
+        try {
+          await sql`ALTER TABLE products ALTER COLUMN image_url TYPE TEXT`
+          console.log('✓ Changed image_url column to TEXT for base64 storage')
+        } catch (error) {
+          console.log('ℹ️ Could not alter image_url column type, may already be TEXT')
+        }
+      }
+      
+      await markMigrationApplied('1.5.0', 'Changed image_url column to store base64 image data')
+    }
+
     console.log('✅ Schema updates completed')
   } catch (error) {
     console.error('❌ Error during schema updates:', error)

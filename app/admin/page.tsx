@@ -549,12 +549,15 @@ function ProductsManager() {
                       src={imagePreview} 
                       alt="Aperçu" 
                       className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                      onLoad={() => console.log('Image preview loaded successfully')}
                       onError={(e) => {
-                        console.error('Error loading image preview:', imagePreview)
+                        console.error('Error loading image preview:', imagePreview.substring(0, 50) + '...')
                         e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCA2NkM0MCA1My44NDk3IDQ5Ljg0OTcgNDQgNjIgNDRDNzQuMTUwMyA0NCA4NCA1My44NDk3IDg0IDY2Qzg0IDc4LjE1MDMgNzQuMTUwMyA4OCA2MiA4OEM0OS44NDk3IDg4IDQwIDc4LjE1MDMgNDAgNjZaIiBmaWxsPSIjOUNBM0FGIi8+Cjx0ZXh0IHg9IjY0IiB5PSI3NCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNkI3Mjc5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5Ob24gdHJvdXbDqTwvdGV4dD4KPC9zdmc+'
                       }}
                     />
-                    <p className="text-xs text-gray-500 mt-2">URL: {imagePreview}</p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      Type: {imagePreview.startsWith('data:') ? 'Base64 image data' : 'File path'}
+                    </p>
                   </div>
                 )}
               </div>
@@ -666,7 +669,7 @@ function ProductsManager() {
                       alt="Product"
                       className="w-16 h-16 object-cover rounded-lg border border-gray-200"
                       onError={(e) => {
-                        console.error('Failed to load product image:', product.image_url)
+                        console.error('Failed to load product image for product:', product.name_fr)
                         e.currentTarget.style.display = 'none'
                       }}
                     />

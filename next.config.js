@@ -2,7 +2,7 @@
 const nextConfig = {
   images: {
     domains: ['localhost'],
-    unoptimized: true, // Allow serving from public directory
+    unoptimized: true, // Allow base64 data URLs
   },
 }
 
