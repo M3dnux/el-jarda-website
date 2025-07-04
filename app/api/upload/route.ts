@@ -39,20 +39,29 @@ export async function POST(request: NextRequest) {
     try {
       const fs = require('fs')
       if (!fs.existsSync(uploadDir)) {
+        console.log('Creating uploads directory:', uploadDir)
         fs.mkdirSync(uploadDir, { recursive: true })
       }
+      
+      console.log('Writing file to:', filePath)
       await writeFile(filePath, buffer)
+      console.log('File written successfully')
     } catch (error) {
       console.error('Error writing file:', error)
-      return NextResponse.json({ error: 'Failed to save file to server' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'Failed to save file to server', 
+        details: error.message 
+      }, { status: 500 })
     }
 
     // Return the URL that can be used to access the image
     const imageUrl = `/uploads/${filename}`
+    console.log('Image uploaded successfully. URL:', imageUrl)
     
     return NextResponse.json({ 
       message: 'Image uploaded successfully',
-      imageUrl: imageUrl 
+      imageUrl: imageUrl,
+      filename: filename 
     })
 
   } catch (error) {

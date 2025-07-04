@@ -249,20 +249,24 @@ function ProductsManager() {
     const file = e.target.files?.[0]
     if (!file) return
 
+    console.log('Starting image upload for file:', file.name)
     setUploading(true)
     
     try {
       const formData = new FormData()
       formData.append('file', file)
 
+      console.log('Uploading to /api/upload...')
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       })
 
       const data = await response.json()
+      console.log('Upload response:', data)
 
       if (response.ok) {
+        console.log('Setting image URL:', data.imageUrl)
         setFormData(prev => ({ ...prev, image_url: data.imageUrl }))
         setImagePreview(data.imageUrl)
         toast.success('Image téléchargée avec succès!')
@@ -540,11 +544,17 @@ function ProductsManager() {
                 )}
                 {imagePreview && (
                   <div className="mt-4">
+                    <p className="text-sm text-gray-600 mb-2">Aperçu de l'image:</p>
                     <img 
                       src={imagePreview} 
                       alt="Aperçu" 
                       className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                      onError={(e) => {
+                        console.error('Error loading image preview:', imagePreview)
+                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCA2NkM0MCA1My44NDk3IDQ5Ljg0OTcgNDQgNjIgNDRDNzQuMTUwMyA0NCA4NCA1My44NDk3IDg0IDY2Qzg0IDc4LjE1MDMgNzQuMTUwMyA4OCA2MiA4OEM0OS44NDk3IDg4IDQwIDc4LjE1MDMgNDAgNjZaIiBmaWxsPSIjOUNBM0FGIi8+Cjx0ZXh0IHg9IjY0IiB5PSI3NCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNkI3Mjc5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5Ob24gdHJvdXbDqTwvdGV4dD4KPC9zdmc+'
+                      }}
                     />
+                    <p className="text-xs text-gray-500 mt-2">URL: {imagePreview}</p>
                   </div>
                 )}
               </div>
@@ -592,6 +602,9 @@ function ProductsManager() {
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Référence
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Image
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
@@ -645,6 +658,25 @@ function ProductsManager() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {product.reference}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {product.image_url ? (
+                    <img 
+                      src={product.image_url} 
+                      alt="Product"
+                      className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                      onError={(e) => {
+                        console.error('Failed to load product image:', product.image_url)
+                        e.currentTarget.style.display = 'none'
+                        e.currentTarget.parentElement.querySelector('.fallback-icon').style.display = 'flex'
+                      }}
+                    />
+                  ) : null}
+                  <div className={`w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center fallback-icon ${product.image_url ? 'hidden' : ''}`}>
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
