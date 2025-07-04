@@ -37,14 +37,14 @@ export async function POST(request: NextRequest) {
     
     // Create uploads directory if it doesn't exist
     try {
-      await writeFile(filePath, buffer)
-    } catch (error) {
-      // If directory doesn't exist, create it
       const fs = require('fs')
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true })
       }
       await writeFile(filePath, buffer)
+    } catch (error) {
+      console.error('Error writing file:', error)
+      return NextResponse.json({ error: 'Failed to save file to server' }, { status: 500 })
     }
 
     // Return the URL that can be used to access the image
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({ 
       message: 'Image uploaded successfully',
-      url: imageUrl 
+      imageUrl: imageUrl 
     })
 
   } catch (error) {

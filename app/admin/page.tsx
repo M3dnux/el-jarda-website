@@ -267,9 +267,11 @@ function ProductsManager() {
         setImagePreview(data.imageUrl)
         toast.success('Image téléchargée avec succès!')
       } else {
+        console.error('Upload error:', data)
         toast.error(data.error || 'Erreur lors du téléchargement')
       }
     } catch (error) {
+      console.error('Upload error:', error)
       toast.error('Erreur lors du téléchargement de l\'image')
     } finally {
       setUploading(false)
