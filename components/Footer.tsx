@@ -116,23 +116,25 @@ export default function Footer({ language }: FooterProps) {
   return (
     <footer className="bg-gray-900 text-white" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="container-max section-padding">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8`}>
           {/* Company Info */}
-          <div className="lg:col-span-2">
-            <Link href="/" className={`flex items-center mb-4 hover:opacity-80 transition-opacity cursor-pointer ${language === 'ar' ? 'space-x-reverse space-x-3' : 'space-x-3'}`}>
-              <Image 
-                src="/el_jarda.png" 
-                alt="El Jarda Logo" 
-                width={48} 
-                height={48}
-                className="rounded-full"
-              />
-              <span className={`text-2xl font-bold ${language === 'ar' ? 'arabic-text' : ''}`}>{siteName}</span>
+          <div className={`lg:col-span-2 ${language === 'ar' ? 'md:order-1 lg:order-1' : ''}`}>
+            <Link href="/" className={`flex items-center mb-4 hover:opacity-80 transition-opacity cursor-pointer ${language === 'ar' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`flex items-center gap-3 ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}>
+                <span className={`text-2xl font-bold ${language === 'ar' ? 'arabic-text' : ''}`}>{siteName}</span>
+                <Image 
+                  src="/el_jarda.png" 
+                  alt="El Jarda Logo" 
+                  width={48} 
+                  height={48}
+                  className="rounded-full"
+                />
+              </div>
             </Link>
-            <p className={`text-gray-300 mb-6 leading-relaxed ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+            <p className={`text-gray-300 mb-6 leading-relaxed max-w-md ${language === 'ar' ? 'arabic-text text-right' : 'text-left'}`}>
               {getDescription()}
             </p>
-            <div className={`flex gap-4 ${language === 'ar' ? 'flex-row-reverse justify-end' : ''}`}>
+            <div className={`flex gap-4 ${language === 'ar' ? 'justify-end' : 'justify-start'}`}>
               <a
                 href={socialLinks.facebook}
                 target="_blank"
@@ -158,65 +160,65 @@ export default function Footer({ language }: FooterProps) {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className={`text-lg font-semibold mb-4 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
-              {t.quickLinks}
-            </h3>
-            <ul className="space-y-2">
-              <li>
-                <a href="#home" className={`text-gray-300 hover:text-primary-400 transition-colors ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
-                  {language === 'fr' ? 'Accueil' : 'الرئيسية'}
-                </a>
-              </li>
-              <li>
-                <a href="#about" className={`text-gray-300 hover:text-primary-400 transition-colors ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
-                  {t.about}
-                </a>
-              </li>
-              <li>
-                <a href="#products" className={`text-gray-300 hover:text-primary-400 transition-colors ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
-                  {t.products}
-                </a>
-              </li>
-              <li>
-                <a href="#contact" className={`text-gray-300 hover:text-primary-400 transition-colors ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
-                  {t.contact}
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div>
-            <h3 className={`text-lg font-semibold mb-4 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+          {/* Contact Info - appears second in Arabic */}
+          <div className={`${language === 'ar' ? 'text-right md:order-2 lg:order-2' : 'text-left'}`}>
+            <h3 className={`text-lg font-semibold mb-4 ${language === 'ar' ? 'arabic-text' : ''}`}>
               {t.contact}
             </h3>
             <div className="space-y-3">
-              <div className={`flex items-start gap-3 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-start gap-3 ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}>
                 <svg className="w-5 h-5 text-primary-400 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span className={`text-gray-300 text-sm ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+                <span className={`text-gray-300 text-sm leading-relaxed ${language === 'ar' ? 'arabic-text' : ''}`}>
                   {contactInfo.address}
                 </span>
               </div>
-              <div className={`flex items-center gap-3 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-center gap-3 ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}>
                 <svg className="w-5 h-5 text-primary-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 <div>
-                  <p className={`text-gray-300 text-sm ${language === 'ar' ? 'text-right' : ''}`}>{contactInfo.phone}</p>
+                  <p className={`text-gray-300 text-sm ${language === 'ar' ? 'arabic-text' : ''}`}>{contactInfo.phone}</p>
                 </div>
               </div>
-              <div className={`flex items-center gap-3 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
+              <div className={`flex items-center gap-3 ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}>
                 <svg className="w-5 h-5 text-primary-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span className={`text-gray-300 text-sm ${language === 'ar' ? 'text-right' : ''}`}>{contactInfo.email}</span>
+                <span className={`text-gray-300 text-sm ${language === 'ar' ? 'arabic-text' : ''}`}>{contactInfo.email}</span>
               </div>
             </div>
+          </div>
+
+          {/* Quick Links - appears last in Arabic */}
+          <div className={`${language === 'ar' ? 'text-right md:order-3 lg:order-3' : 'text-left'}`}>
+            <h3 className={`text-lg font-semibold mb-4 ${language === 'ar' ? 'arabic-text' : ''}`}>
+              {t.quickLinks}
+            </h3>
+            <ul className="space-y-2">
+              <li>
+                <a href="#home" className={`text-gray-300 hover:text-primary-400 transition-colors block ${language === 'ar' ? 'arabic-text' : ''}`}>
+                  {language === 'fr' ? 'Accueil' : 'الرئيسية'}
+                </a>
+              </li>
+              <li>
+                <a href="#about" className={`text-gray-300 hover:text-primary-400 transition-colors block ${language === 'ar' ? 'arabic-text' : ''}`}>
+                  {t.about}
+                </a>
+              </li>
+              <li>
+                <a href="#products" className={`text-gray-300 hover:text-primary-400 transition-colors block ${language === 'ar' ? 'arabic-text' : ''}`}>
+                  {t.products}
+                </a>
+              </li>
+              <li>
+                <a href="#contact" className={`text-gray-300 hover:text-primary-400 transition-colors block ${language === 'ar' ? 'arabic-text' : ''}`}>
+                  {t.contact}
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
 

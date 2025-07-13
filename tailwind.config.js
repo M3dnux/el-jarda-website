@@ -37,7 +37,33 @@ module.exports = {
         arabic: ['Amiri', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
+      spacing: {
+        'rtl-gap': '1rem',
+      }
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addUtilities }) {
+      addUtilities({
+        '.flex-row-rtl': {
+          '@apply rtl:flex-row-reverse ltr:flex-row': {},
+        },
+        '.justify-start-rtl': {
+          '@apply rtl:justify-end ltr:justify-start': {},
+        },
+        '.justify-end-rtl': {
+          '@apply rtl:justify-start ltr:justify-end': {},
+        },
+        '.text-align-rtl': {
+          '@apply rtl:text-right ltr:text-left': {},
+        },
+        '.ml-auto-rtl': {
+          '@apply rtl:mr-auto rtl:ml-0 ltr:ml-auto': {},
+        },
+        '.mr-auto-rtl': {
+          '@apply rtl:ml-auto rtl:mr-0 ltr:mr-auto': {},
+        },
+      })
+    }
+  ],
 }

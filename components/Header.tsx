@@ -63,21 +63,23 @@ export default function Header({ language, setLanguage }: HeaderProps) {
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="container-max">
-        <div className={`flex items-center justify-between h-16 px-4 ${language === 'ar' ? 'flex-row-reverse' : ''}`}>
+        <div className={`flex items-center justify-between h-16 px-4`}>
           {/* Logo */}
-          <Link href="/" className={`flex items-center hover:opacity-80 transition-opacity cursor-pointer ${language === 'ar' ? 'space-x-reverse space-x-3' : 'space-x-3'}`}>
-            <Image 
-              src="/el_jarda.png" 
-              alt="El Jarda Logo" 
-              width={50} 
-              height={50}
-              className="rounded-full w-12 h-12"
-            />
-            <span className={`text-2xl font-bold text-primary-700 ${language === 'ar' ? 'arabic-text' : ''}`}>{siteName}</span>
+          <Link href="/" className={`flex items-center hover:opacity-80 transition-opacity cursor-pointer`}>
+            <div className={`flex items-center gap-3 ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}>
+              <Image 
+                src="/el_jarda.png" 
+                alt="El Jarda Logo" 
+                width={50} 
+                height={50}
+                className="rounded-full w-12 h-12"
+              />
+              <span className={`text-2xl font-bold text-primary-700 ${language === 'ar' ? 'arabic-text' : ''}`}>{siteName}</span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className={`hidden md:flex items-center ${language === 'ar' ? 'space-x-reverse space-x-8' : 'space-x-8'}`}>
+          <nav className={`hidden md:flex items-center gap-8 ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}>
             <a href="#home" className={`text-gray-700 hover:text-primary-600 transition-colors ${language === 'ar' ? 'arabic-text' : ''}`}>
               {t.home}
             </a>
@@ -96,7 +98,7 @@ export default function Header({ language, setLanguage }: HeaderProps) {
           </nav>
 
           {/* Language Toggle & Mobile Menu Button */}
-          <div className={`flex items-center ${language === 'ar' ? 'space-x-reverse space-x-4' : 'space-x-4'}`}>
+          <div className={`flex items-center gap-4 ${language === 'ar' ? 'flex-row-reverse' : 'flex-row'}`}>
             <button
               onClick={() => setLanguage(language === 'fr' ? 'ar' : 'fr')}
               className={`px-3 py-1 border border-primary-600 text-primary-600 rounded hover:bg-primary-600 hover:text-white transition-colors ${language === 'ar' ? 'arabic-text' : ''}`}
@@ -104,35 +106,37 @@ export default function Header({ language, setLanguage }: HeaderProps) {
               {language === 'fr' ? 'العربية' : 'Français'}
             </button>
 
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
+            {/* Mobile menu button - only show on mobile */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="p-2"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t">
-            <div className={`px-4 py-2 space-y-2 ${language === 'ar' ? 'text-right' : ''}`}>
-              <a href="#home" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+            <div className={`px-4 py-2 space-y-2 ${language === 'ar' ? 'text-right' : 'text-left'}`}>
+              <a href="#home" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : 'text-left'}`}>
                 {t.home}
               </a>
-              <a href="#about" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+              <a href="#about" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : 'text-left'}`}>
                 {t.about}
               </a>
-              <a href="#products" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+              <a href="#products" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : 'text-left'}`}>
                 {t.products}
               </a>
-              <a href="#contact" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+              <a href="#contact" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : 'text-left'}`}>
                 {t.contact}
               </a>
-              <Link href="/admin" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+              <Link href="/admin" className={`block py-2 text-gray-700 hover:text-primary-600 ${language === 'ar' ? 'arabic-text text-right' : 'text-left'}`}>
                 {t.admin}
               </Link>
             </div>

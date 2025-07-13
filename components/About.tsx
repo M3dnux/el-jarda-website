@@ -132,7 +132,7 @@ export default function About({ language }: AboutProps) {
           <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-6 ${language === 'ar' ? 'arabic-text' : ''}`}>
             {t.title}
           </h2>
-          <p className={`text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed ${language === 'ar' ? 'arabic-text' : ''}`}>
+          <p className={`text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed text-center ${language === 'ar' ? 'arabic-text' : ''}`}>
             {getDescription()}
           </p>
         </motion.div>
@@ -179,9 +179,9 @@ export default function About({ language }: AboutProps) {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h3 className={`text-2xl font-bold text-gray-900 mb-6 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
-              {t.services}
-            </h3>
+          <h3 className={`text-2xl font-bold text-gray-900 mb-6 ${language === 'ar' ? 'arabic-text text-center' : 'text-center'}`}>
+            {t.services}
+          </h3>
             <div className="space-y-4">
               {t.serviceList.map((service, index) => (
                 <motion.div
@@ -207,7 +207,7 @@ export default function About({ language }: AboutProps) {
             viewport={{ once: true }}
             className="bg-primary-50 p-8 rounded-xl"
           >
-            <h3 className={`text-2xl font-bold text-gray-900 mb-6 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+            <h3 className={`text-2xl font-bold text-gray-900 mb-6 ${language === 'ar' ? 'arabic-text text-center' : 'text-center'}`}>
               {language === 'fr' ? 'Nous Contacter' : 'تواصل معنا'}
             </h3>
             <div className="space-y-4">

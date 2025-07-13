@@ -141,7 +141,7 @@ export default function Contact({ language }: ContactProps) {
           <h2 className={`text-3xl md:text-4xl font-bold text-gray-900 mb-6 ${language === 'ar' ? 'arabic-text' : ''}`}>
             {t.title}
           </h2>
-          <p className={`text-lg text-gray-600 max-w-3xl mx-auto ${language === 'ar' ? 'arabic-text' : ''}`}>
+          <p className={`text-lg text-gray-600 max-w-3xl mx-auto text-center ${language === 'ar' ? 'arabic-text' : ''}`}>
             {t.subtitle}
           </p>
         </motion.div>
@@ -254,7 +254,7 @@ export default function Contact({ language }: ContactProps) {
           >
             {/* Contact Details */}
             <div className="bg-primary-50 p-8 rounded-xl">
-              <h3 className={`text-xl font-bold text-gray-900 mb-6 ${language === 'ar' ? 'arabic-text text-right' : ''}`}>
+              <h3 className={`text-xl font-bold text-gray-900 mb-6 text-center ${language === 'ar' ? 'arabic-text' : ''}`}>
                 {language === 'fr' ? 'Informations de contact' : 'معلومات الاتصال'}
               </h3>
               

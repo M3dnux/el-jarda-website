@@ -82,7 +82,7 @@
 }
 
 [dir="rtl"] .text-center {
-  text-align: center;
+  text-align: center !important;
 }
 
 [dir="ltr"] {
@@ -91,8 +91,37 @@
 }
 
 /* Ensure centered content stays centered in RTL */
-.arabic-text.text-center {
+.arabic-text.text-center,
+[dir="rtl"] .text-center .arabic-text,
+[dir="rtl"] .text-center {
   text-align: center !important;
+}
+
+/* Force center alignment for specific elements */
+[dir="rtl"] .force-center,
+.arabic-text.force-center {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Section headings should be centered */
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] .section-title,
+[dir="rtl"] .hero-title,
+[dir="rtl"] .hero-subtitle {
+  text-align: center;
+}
+
+/* Specific centering for hero and main sections */
+[dir="rtl"] .hero-content {
+  text-align: center;
+}
+
+[dir="rtl"] .section-header {
+  text-align: center;
 }
 
 /* Button text alignment for RTL */
@@ -112,6 +141,172 @@
   direction: rtl;
 }
 
+/* RTL spacing and margin fixes */
+[dir="rtl"] .space-x-3 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+  margin-right: calc(0.75rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.75rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+[dir="rtl"] .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+  margin-right: calc(1rem * var(--tw-space-x-reverse));
+  margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+[dir="rtl"] .space-x-8 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+  margin-right: calc(2rem * var(--tw-space-x-reverse));
+  margin-left: calc(2rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+/* RTL gap fixes for flexbox */
+[dir="rtl"] .gap-3 {
+  gap: 0.75rem;
+}
+
+[dir="rtl"] .gap-4 {
+  gap: 1rem;
+}
+
+[dir="rtl"] .gap-8 {
+  gap: 2rem;
+}
+
+/* RTL flex direction fixes */
+[dir="rtl"] .flex-row-reverse {
+  flex-direction: row;
+}
+
+[dir="rtl"] .justify-end {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .justify-start {
+  justify-content: flex-end;
+}
+
+/* RTL grid layout improvements */
+[dir="rtl"] .grid {
+  direction: rtl;
+}
+
+[dir="rtl"] .lg\:col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+/* Social media icons RTL alignment */
+[dir="rtl"] .social-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+  flex-direction: row-reverse;
+}
+
+[dir="ltr"] .social-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+/* Footer RTL improvements */
+[dir="rtl"] .footer-content {
+  text-align: right;
+}
+
+[dir="rtl"] .footer-social {
+  justify-content: flex-start;
+  flex-direction: row;
+}
+
+[dir="ltr"] .footer-social {
+  justify-content: flex-start;
+}
+
+/* Footer grid ordering for Arabic */
+[dir="rtl"] footer .lg\:order-2 {
+  order: 2;
+}
+
+[dir="rtl"] footer .lg\:order-3 {
+  order: 3;
+}
+
+/* Footer logo and social media alignment for Arabic */
+[dir="rtl"] footer .flex.gap-4 {
+  justify-content: flex-start;
+}
+
+/* Better spacing for footer contact info in Arabic */
+[dir="rtl"] footer .space-y-3 > * {
+  margin-top: 0.75rem;
+}
+
+[dir="rtl"] footer .space-y-3 > :first-child {
+  margin-top: 0;
+}
+
+/* Button RTL content alignment */
+[dir="rtl"] button,
+[dir="rtl"] a[role="button"] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Icon and text alignment in RTL */
+[dir="rtl"] .icon-text-wrapper {
+  flex-direction: row-reverse;
+  gap: 0.5rem;
+}
+
+[dir="ltr"] .icon-text-wrapper {
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+/* Grid layout RTL improvements */
+[dir="rtl"] .grid-rtl {
+  direction: rtl;
+}
+
+[dir="rtl"] .grid-rtl > * {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Contact info RTL styling */
+[dir="rtl"] .contact-info {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+[dir="ltr"] .contact-info {
+  flex-direction: row;
+  text-align: left;
+}
+
+/* Menu alignment improvements */
+[dir="rtl"] .menu-items {
+  flex-direction: row-reverse;
+}
+
+[dir="ltr"] .menu-items {
+  flex-direction: row;
+}
+
+/* Card content RTL alignment */
+[dir="rtl"] .card-content {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="ltr"] .card-content {
+  text-align: left;
+  direction: ltr;
+}
+
 /* Loader */
 .loader {
   border: 4px solid #f3f3f3;
@@ -125,4 +320,67 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Enhanced RTL text centering for Arabic */
+[dir="rtl"] .section-heading,
+[dir="rtl"] .section-title,
+[dir="rtl"] .page-title {
+  text-align: center !important;
+}
+
+[dir="rtl"] .section-description,
+[dir="rtl"] .page-description {
+  text-align: center !important;
+}
+
+/* Ensure main section titles are always centered in Arabic */
+[dir="rtl"] .text-center h1,
+[dir="rtl"] .text-center h2,
+[dir="rtl"] .text-center h3,
+[dir="rtl"] .text-center p {
+  text-align: center !important;
+}
+
+/* Section-specific centering improvements */
+[dir="rtl"] #about .text-center,
+[dir="rtl"] #products .text-center,
+[dir="rtl"] #contact .text-center,
+[dir="rtl"] #home .text-center {
+  text-align: center !important;
+}
+
+[dir="rtl"] #about .text-center *,
+[dir="rtl"] #products .text-center *,
+[dir="rtl"] #contact .text-center *,
+[dir="rtl"] #home .text-center * {
+  text-align: center !important;
+}
+
+/* Override any specific text-right for centered sections */
+[dir="rtl"] .text-center .arabic-text {
+  text-align: center !important;
+}
+
+/* Additional centering improvements for Arabic text */
+[dir="rtl"] .text-center .arabic-text,
+[dir="rtl"] .text-center,
+.text-center [dir="rtl"],
+.text-center .arabic-text {
+  text-align: center !important;
+}
+
+/* Force centering for main page sections */
+[dir="rtl"] .hero-content,
+[dir="rtl"] .section-header,
+[dir="rtl"] .text-center div {
+  text-align: center !important;
+}
+
+/* Ensure proper alignment for Arabic in centered containers */
+[dir="rtl"] .text-center p.arabic-text,
+[dir="rtl"] .text-center h1.arabic-text,
+[dir="rtl"] .text-center h2.arabic-text,
+[dir="rtl"] .text-center h3.arabic-text {
+  text-align: center !important;
 }
