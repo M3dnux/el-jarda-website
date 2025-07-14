@@ -11,6 +11,13 @@
 
 </div>
 
+<div align="center">
+
+## 🌐 [**Live Demo**](https://eljarda.com) 
+*Experience the bilingual garden maintenance website in action*
+
+</div>
+
 A modern, bilingual (French/Arabic) website for a professional garden maintenance and landscaping business. Features a comprehensive admin panel for complete content management.
 
 ## ✨ Key Features
