@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sql from '../../../lib/db'
+import { validateAdminToken, createAuthResponse } from '../../../lib/middleware'
 
 export async function GET() {
   try {
@@ -21,15 +22,24 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  // Validate admin token for updating settings
+  const authResult = await validateAdminToken(request)
+  if (!authResult.valid) {
+    return createAuthResponse(authResult.error || 'Non autorisé')
+  }
+
   try {
     const body = await request.json()
     const { settings } = body
 
     for (const [key, value] of Object.entries(settings)) {
       await sql`
-        UPDATE settings 
-        SET value = ${value as string}, updated_at = CURRENT_TIMESTAMP
-        WHERE key = ${key}
+        INSERT INTO settings (key, value, updated_at)
+        VALUES (${key}, ${value as string}, CURRENT_TIMESTAMP)
+        ON CONFLICT (key) 
+        DO UPDATE SET 
+          value = EXCLUDED.value,
+          updated_at = EXCLUDED.updated_at
       `
     }
 

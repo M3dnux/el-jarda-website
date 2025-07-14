@@ -2128,52 +2128,146 @@ function PasswordManager() {
 }
 
 function SettingsManager() {
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [settings, setSettings] = useState<any>({})
   const [formData, setFormData] = useState({
-    name_fr: '',
-    name_ar: '',
-    description_fr: '',
-    description_ar: ''
+    site_name_fr: '',
+    site_name_ar: '',
+    site_description_fr: '',
+    site_description_ar: '',
+    business_address_fr: '',
+    business_address_ar: '',
+    business_phone: '',
+    business_email: '',
+    business_hours: '',
+    whatsapp_number: '',
+    facebook_url: '',
+    instagram_url: '',
+    featured_products_count: '6',
+    products_per_page: '12',
+    meta_description_fr: '',
+    meta_description_ar: '',
+    footer_text_fr: '',
+    footer_text_ar: '',
+    maintenance_mode: 'false'
   })
 
+  useEffect(() => {
+    fetchSettings()
+  }, [])
+
+  const fetchSettings = async () => {
+    try {
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch('/api/settings')
+      if (response && response.ok) {
+        const data = await response.json()
+        setSettings(data)
+        // Populate form with existing settings
+        setFormData(prev => ({
+          ...prev,
+          ...data
+        }))
+      } else {
+        toast.error('Erreur lors du chargement des paramètres')
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error)
+      toast.error('Erreur lors du chargement des paramètres')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSaving(true)
+
+    try {
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch('/api/settings', {
+        method: 'PUT',
+        body: JSON.stringify({ settings: formData })
+      })
+
+      if (response && response.ok) {
+        const data = await response.json()
+        toast.success(data.message)
+        setSettings(formData)
+      } else {
+        const errorData = response ? await response.json() : { error: 'Erreur inconnue' }
+        toast.error(errorData.error || 'Erreur lors de la sauvegarde')
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error)
+      toast.error('Erreur lors de la sauvegarde des paramètres')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleReset = () => {
+    setFormData(prev => ({
+      ...prev,
+      ...settings
+    }))
+    toast.success('Modifications annulées')
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow">
+        <div className="flex items-center justify-center">
+          <div className="loader w-6 h-6"></div>
+          <span className="ml-2">Chargement des paramètres...</span>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 flex items-center">
             <Icons.Settings className="w-6 h-6 mr-2" />
             Paramètres du Site
           </h2>
-          <p className="text-gray-600 mt-1">Gérez les paramètres généraux de votre site web</p>
+          <p className="text-gray-600 mt-1">Gérez les paramètres généraux de votre site web El Jarda</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-md border border-gray-200">
-        <div className="p-6">
-          <form className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Site Information */}
+        <div className="bg-white rounded-lg shadow border border-gray-200">
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Informations du Site</h3>
+          </div>
+          <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nom (Français)
+                  Nom du Site (Français)
                 </label>
                 <input
                   type="text"
-                  value={formData.name_fr}
-                  onChange={(e) => setFormData({ ...formData, name_fr: e.target.value })}
+                  value={formData.site_name_fr}
+                  onChange={(e) => setFormData({ ...formData, site_name_fr: e.target.value })}
                   className="input-field"
-                  required
+                  placeholder="El Jarda"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  اسم (العربية)
+                  اسم الموقع (العربية)
                 </label>
                 <input
                   type="text"
-                  value={formData.name_ar}
-                  onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
+                  value={formData.site_name_ar}
+                  onChange={(e) => setFormData({ ...formData, site_name_ar: e.target.value })}
                   className="input-field arabic-text"
-                  required
+                  placeholder="الجردة"
                 />
               </div>
             </div>
@@ -2184,47 +2278,311 @@ function SettingsManager() {
                   Description (Français)
                 </label>
                 <textarea
-                  value={formData.description_fr}
-                  onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
-                  rows={4}
+                  value={formData.site_description_fr}
+                  onChange={(e) => setFormData({ ...formData, site_description_fr: e.target.value })}
+                  rows={3}
+                  className="input-field"
+                  placeholder="Votre description en français..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  الوصف (العربية)
+                </label>
+                <textarea
+                  value={formData.site_description_ar}
+                  onChange={(e) => setFormData({ ...formData, site_description_ar: e.target.value })}
+                  rows={3}
+                  className="input-field arabic-text"
+                  placeholder="الوصف باللغة العربية..."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Business Information */}
+        <div className="bg-white rounded-lg shadow border border-gray-200">
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Informations Commerciales</h3>
+          </div>
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Adresse (Français)
+                </label>
+                <textarea
+                  value={formData.business_address_fr}
+                  onChange={(e) => setFormData({ ...formData, business_address_fr: e.target.value })}
+                  rows={2}
+                  className="input-field"
+                  placeholder="123 Rue Exemple, Ville, Pays"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  العنوان (العربية)
+                </label>
+                <textarea
+                  value={formData.business_address_ar}
+                  onChange={(e) => setFormData({ ...formData, business_address_ar: e.target.value })}
+                  rows={2}
+                  className="input-field arabic-text"
+                  placeholder="١٢٣ شارع المثال، المدينة، البلد"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Téléphone
+                </label>
+                <input
+                  type="tel"
+                  value={formData.business_phone}
+                  onChange={(e) => setFormData({ ...formData, business_phone: e.target.value })}
+                  className="input-field"
+                  placeholder="+216 XX XXX XXX"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.business_email}
+                  onChange={(e) => setFormData({ ...formData, business_email: e.target.value })}
+                  className="input-field"
+                  placeholder="contact@eljarda.com"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  WhatsApp
+                </label>
+                <input
+                  type="tel"
+                  value={formData.whatsapp_number}
+                  onChange={(e) => setFormData({ ...formData, whatsapp_number: e.target.value })}
+                  className="input-field"
+                  placeholder="+216 XX XXX XXX"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Horaires d'ouverture
+              </label>
+              <textarea
+                value={formData.business_hours}
+                onChange={(e) => setFormData({ ...formData, business_hours: e.target.value })}
+                rows={3}
+                className="input-field"
+                placeholder="Lun-Ven: 8h00-18h00&#10;Sam: 8h00-14h00&#10;Dim: Fermé"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Social Media & Links */}
+        <div className="bg-white rounded-lg shadow border border-gray-200">
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Réseaux Sociaux</h3>
+          </div>
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Facebook URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.facebook_url}
+                  onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
+                  className="input-field"
+                  placeholder="https://facebook.com/eljarda"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Instagram URL
+                </label>
+                <input
+                  type="url"
+                  value={formData.instagram_url}
+                  onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
+                  className="input-field"
+                  placeholder="https://instagram.com/eljarda"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Display Settings */}
+        <div className="bg-white rounded-lg shadow border border-gray-200">
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Paramètres d'Affichage</h3>
+          </div>
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nombre de produits en vedette
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={formData.featured_products_count}
+                  onChange={(e) => setFormData({ ...formData, featured_products_count: e.target.value })}
                   className="input-field"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وصف (العربية)
+                  Produits par page
                 </label>
-                <textarea
-                  value={formData.description_ar}
-                  onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
-                  rows={4}
-                  className="input-field arabic-text"
+                <input
+                  type="number"
+                  min="6"
+                  max="50"
+                  value={formData.products_per_page}
+                  onChange={(e) => setFormData({ ...formData, products_per_page: e.target.value })}
+                  className="input-field"
                 />
               </div>
             </div>
-            
-            <div className="flex justify-end pt-6 border-t border-gray-200">
-              <button
-                type="submit"
-                disabled={saving}
-                className="btn-primary flex items-center space-x-2"
-              >
-                {saving ? (
-                  <>
-                    <div className="loader w-4 h-4"></div>
-                    <span>Sauvegarde...</span>
-                  </>
-                ) : (
-                  <>
-                    <Icons.Check className="w-4 h-4" />
-                    <span>Sauvegarder les paramètres</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
-      </div>
+
+        {/* SEO Settings */}
+        <div className="bg-white rounded-lg shadow border border-gray-200">
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Paramètres SEO</h3>
+          </div>
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Meta Description (Français)
+                </label>
+                <textarea
+                  value={formData.meta_description_fr}
+                  onChange={(e) => setFormData({ ...formData, meta_description_fr: e.target.value })}
+                  rows={3}
+                  className="input-field"
+                  placeholder="Description pour les moteurs de recherche..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Meta Description (العربية)
+                </label>
+                <textarea
+                  value={formData.meta_description_ar}
+                  onChange={(e) => setFormData({ ...formData, meta_description_ar: e.target.value })}
+                  rows={3}
+                  className="input-field arabic-text"
+                  placeholder="وصف لمحركات البحث..."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Settings */}
+        <div className="bg-white rounded-lg shadow border border-gray-200">
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Paramètres du Pied de Page</h3>
+          </div>
+          <div className="p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Texte du Footer (Français)
+                </label>
+                <textarea
+                  value={formData.footer_text_fr}
+                  onChange={(e) => setFormData({ ...formData, footer_text_fr: e.target.value })}
+                  rows={2}
+                  className="input-field"
+                  placeholder="© 2025 El Jarda. Tous droits réservés."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  نص التذييل (العربية)
+                </label>
+                <textarea
+                  value={formData.footer_text_ar}
+                  onChange={(e) => setFormData({ ...formData, footer_text_ar: e.target.value })}
+                  rows={2}
+                  className="input-field arabic-text"
+                  placeholder="© ٢٠٢٥ الجردة. جميع الحقوق محفوظة."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* System Settings */}
+        <div className="bg-white rounded-lg shadow border border-gray-200">
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900">Paramètres Système</h3>
+          </div>
+          <div className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="text-sm font-medium text-gray-900">Mode Maintenance</h4>
+                <p className="text-sm text-gray-500">Activer pour fermer temporairement le site aux visiteurs</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.maintenance_mode === 'true'}
+                  onChange={(e) => setFormData({ ...formData, maintenance_mode: e.target.checked ? 'true' : 'false' })}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="btn-secondary"
+            disabled={saving}
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            disabled={saving}
+            className="btn-primary flex items-center space-x-2"
+          >
+            {saving ? (
+              <>
+                <div className="loader w-4 h-4"></div>
+                <span>Sauvegarde...</span>
+              </>
+            ) : (
+              <>
+                <Icons.Check className="w-4 h-4" />
+                <span>Sauvegarder les paramètres</span>
+              </>
+            )}
+          </button>
+        </div>
+      </form>
     </div>
   )
 }
