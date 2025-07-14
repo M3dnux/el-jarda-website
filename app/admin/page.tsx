@@ -1880,6 +1880,17 @@ function DatabaseOverview() {
         </button>
       </div>
 
+      {/* Debug Information */}
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <h3 className="font-medium text-yellow-800 mb-2">Debug Info:</h3>
+        <div className="text-sm text-yellow-700">
+          <p>Tables count: {dbStats?.tables?.length || 0}</p>
+          <p>First table: {dbStats?.tables?.[0]?.name || 'N/A'}</p>
+          <p>First table data length: {dbStats?.tables?.[0]?.tableData?.length || 0}</p>
+          <p>First table columns length: {dbStats?.tables?.[0]?.columnDetails?.length || 0}</p>
+        </div>
+      </div>
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-lg shadow">
@@ -1889,7 +1900,7 @@ function DatabaseOverview() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Total des Tables</p>
-              <p className="text-2xl font-bold text-gray-900">{dbStats.summary.totalTables}</p>
+              <p className="text-2xl font-bold text-gray-900">{dbStats.totalTables}</p>
             </div>
           </div>
         </div>
@@ -1901,7 +1912,7 @@ function DatabaseOverview() {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-500">Total des Enregistrements</p>
-              <p className="text-2xl font-bold text-gray-900">{dbStats.summary.totalRows.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-gray-900">{dbStats.totalRecords.toLocaleString()}</p>
             </div>
           </div>
         </div>

@@ -10,86 +10,66 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Get table information from PostgreSQL information_schema
-    const tables = await sql`
-      SELECT 
-        table_name,
-        (xpath('/row/c/text()', query_to_xml(format('select count(*) as c from %I.%I', table_schema, table_name), false, true, '')))[1]::text::int as row_count
+    // Get all table names
+    const tableNames = await sql`
+      SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public' 
       AND table_type = 'BASE TABLE'
       ORDER BY table_name
     `
 
-    // Get detailed information for each table
-    const tableDetails = await Promise.all(
-      tables.map(async (table: any) => {
-        try {
-          // Get column information
-          const columns = await sql`
-            SELECT 
-              column_name,
-              data_type,
-              is_nullable,
-              column_default
-            FROM information_schema.columns 
-            WHERE table_schema = 'public' 
-            AND table_name = ${table.table_name}
-            ORDER BY ordinal_position
-          `
+    const tablesData = []
+    let totalRecords = 0
 
-          // Get ALL data from the table (not just samples)
-          let tableData = []
-          try {
-            tableData = await sql.unsafe(`
-              SELECT * FROM ${table.table_name} 
-              ORDER BY 
-                CASE 
-                  WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = '${table.table_name}' AND column_name = 'created_at') 
-                  THEN created_at 
-                  WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = '${table.table_name}' AND column_name = 'id') 
-                  THEN id 
-                  ELSE (SELECT column_name FROM information_schema.columns WHERE table_name = '${table.table_name}' ORDER BY ordinal_position LIMIT 1)
-                END DESC
-            `)
-          } catch (error) {
-            console.error(`Error fetching data for ${table.table_name}:`, error)
-            tableData = []
-          }
+    // Process each table
+    for (const tableRow of tableNames) {
+      const tableName = tableRow.table_name
 
-          return {
-            name: table.table_name,
-            rowCount: table.row_count || 0,
-            columns: columns.length,
-            columnDetails: columns,
-            tableData: tableData
-          }
-        } catch (error) {
-          console.error(`Error getting details for table ${table.table_name}:`, error)
-          return {
-            name: table.table_name,
-            rowCount: 0,
-            columns: 0,
-            columnDetails: [],
-            tableData: []
-          }
-        }
-      })
-    )
+      try {
+        // Get row count
+        const countResult = await sql.unsafe(`SELECT COUNT(*) as count FROM "${tableName}"`)
+        const rowCount = parseInt(countResult[0].count)
+        totalRecords += rowCount
 
-    // Calculate totals
-    const totalTables = tableDetails.length
-    const totalRows = tableDetails.reduce((sum, table) => sum + table.rowCount, 0)
+        // Get column details
+        const columnDetails = await sql`
+          SELECT column_name, data_type, is_nullable, column_default
+          FROM information_schema.columns 
+          WHERE table_name = ${tableName}
+          ORDER BY ordinal_position
+        `
+
+        // Get table data (limit to 50 rows for performance)
+        const tableData = await sql.unsafe(`SELECT * FROM "${tableName}" LIMIT 50`)
+
+        tablesData.push({
+          name: tableName,
+          rowCount,
+          columnDetails,
+          tableData
+        })
+
+      } catch (error) {
+        console.error(`Error processing table ${tableName}:`, error)
+        // Add table with empty data if there's an error
+        tablesData.push({
+          name: tableName,
+          rowCount: 0,
+          columnDetails: [],
+          tableData: []
+        })
+      }
+    }
 
     return NextResponse.json({
-      summary: {
-        totalTables,
-        totalRows
-      },
-      tables: tableDetails
+      totalTables: tablesData.length,
+      totalRecords,
+      tables: tablesData
     })
+
   } catch (error) {
-    console.error('Error fetching database statistics:', error)
-    return NextResponse.json({ error: 'Failed to fetch database statistics' }, { status: 500 })
+    console.error('Database API error:', error)
+    return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
 }
