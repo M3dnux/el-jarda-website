@@ -95,6 +95,24 @@ const Icons = {
   ),
 }
 
+// Utility function for authenticated API calls
+const createAuthenticatedFetch = () => {
+  return async (url: string, options: RequestInit = {}) => {
+    const token = localStorage.getItem('adminToken')
+    if (!token) {
+      throw new Error('No authentication token')
+    }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options.headers
+    }
+
+    return fetch(url, { ...options, headers })
+  }
+}
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -306,16 +324,18 @@ function AdminDashboard() {
 
   const fetchDashboardStats = async () => {
     try {
+      const authenticatedFetch = createAuthenticatedFetch()
+      
       // Fetch products
-      const productsRes = await fetch('/api/products')
+      const productsRes = await authenticatedFetch('/api/products')
       const products = productsRes.ok ? await productsRes.json() : []
       
       // Fetch categories
-      const categoriesRes = await fetch('/api/categories')
+      const categoriesRes = await authenticatedFetch('/api/categories')
       const categories = categoriesRes.ok ? await categoriesRes.json() : []
       
       // Fetch messages
-      const messagesRes = await fetch('/api/admin/messages')
+      const messagesRes = await authenticatedFetch('/api/admin/messages')
       const messages = messagesRes.ok ? await messagesRes.json() : []
 
       // Calculate stats
@@ -412,8 +432,9 @@ function DashboardOverview({ stats, onRefresh }: { stats: any, onRefresh: () => 
 
   const fetchRecentActivity = async () => {
     try {
+      const authenticatedFetch = createAuthenticatedFetch()
       // Get recent messages for activity feed
-      const messagesRes = await fetch('/api/admin/messages')
+      const messagesRes = await authenticatedFetch('/api/admin/messages')
       if (messagesRes.ok) {
         const messages = await messagesRes.json()
         const recent = messages.slice(0, 5).map((msg: any) => ({
@@ -687,8 +708,12 @@ function ProductsManager() {
       const formData = new FormData()
       formData.append('file', file)
 
+      const token = localStorage.getItem('adminToken')
       const response = await fetch('/api/upload', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       })
 
@@ -750,7 +775,8 @@ function ProductsManager() {
     }
 
     try {
-      const response = await fetch(`/api/products/${productId}`, {
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch(`/api/products/${productId}`, {
         method: 'DELETE'
       })
 
@@ -768,7 +794,8 @@ function ProductsManager() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('/api/products')
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch('/api/products')
       if (response.ok) {
         const data = await response.json()
         setProducts(data)
@@ -780,7 +807,8 @@ function ProductsManager() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('/api/categories')
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch('/api/categories')
       if (response.ok) {
         const data = await response.json()
         setCategories(data)
@@ -794,10 +822,11 @@ function ProductsManager() {
     e.preventDefault()
     
     try {
+      const authenticatedFetch = createAuthenticatedFetch()
       const url = editingProduct ? `/api/products/${editingProduct.id}` : '/api/products'
       const method = editingProduct ? 'PUT' : 'POST'
       
-      const response = await fetch(url, {
+      const response = await authenticatedFetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -1394,7 +1423,8 @@ function CategoriesManager() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('/api/categories')
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch('/api/categories')
       if (response.ok) {
         const data = await response.json()
         setCategories(data)
@@ -1408,10 +1438,11 @@ function CategoriesManager() {
     e.preventDefault()
     
     try {
+      const authenticatedFetch = createAuthenticatedFetch()
       const url = editingCategory ? `/api/categories/${(editingCategory as any).id}` : '/api/categories'
       const method = editingCategory ? 'PUT' : 'POST'
       
-      const response = await fetch(url, {
+      const response = await authenticatedFetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
@@ -1456,7 +1487,8 @@ function CategoriesManager() {
     }
 
     try {
-      const response = await fetch(`/api/categories/${categoryId}`, {
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch(`/api/categories/${categoryId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
