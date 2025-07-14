@@ -1946,51 +1946,165 @@ function DatabaseOverview() {
 
               {/* Table Details */}
               {expandedTables.has(table.name) && (
-                <div className="mt-4 bg-gray-50 rounded-lg p-4">
-                  <h5 className="text-sm font-medium text-gray-900 mb-3">Structure des Colonnes</h5>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead>
-                        <tr>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Nom
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Type
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Nullable
-                          </th>
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Défaut
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200">
-                        {table.columnDetails.map((column: any, index: number) => (
-                          <tr key={index} className="bg-white">
-                            <td className="px-3 py-2 text-sm font-medium text-gray-900">
-                              {column.column_name}
-                            </td>
-                            <td className="px-3 py-2 text-sm text-gray-500">
-                              {column.data_type}
-                            </td>
-                            <td className="px-3 py-2 text-sm text-gray-500">
-                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                column.is_nullable === 'YES' 
-                                  ? 'bg-yellow-100 text-yellow-800' 
-                                  : 'bg-green-100 text-green-800'
-                              }`}>
-                                {column.is_nullable === 'YES' ? 'Oui' : 'Non'}
-                              </span>
-                            </td>
-                            <td className="px-3 py-2 text-sm text-gray-500">
-                              {column.column_default || '-'}
-                            </td>
+                <div className="mt-4 space-y-6">
+                  {/* Column Structure */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h5 className="text-sm font-medium text-gray-900 mb-3 flex items-center">
+                      <Icons.Database className="w-4 h-4 mr-2" />
+                      Structure des Colonnes
+                    </h5>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead>
+                          <tr>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Nom
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Type
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Nullable
+                            </th>
+                            <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              Défaut
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {table.columnDetails.map((column: any, index: number) => (
+                            <tr key={index} className="bg-white">
+                              <td className="px-3 py-2 text-sm font-medium text-gray-900">
+                                {column.column_name}
+                              </td>
+                              <td className="px-3 py-2 text-sm text-gray-500">
+                                <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                  {column.data_type}
+                                </span>
+                              </td>
+                              <td className="px-3 py-2 text-sm text-gray-500">
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                  column.is_nullable === 'YES' 
+                                    ? 'bg-yellow-100 text-yellow-800' 
+                                    : 'bg-green-100 text-green-800'
+                                }`}>
+                                  {column.is_nullable === 'YES' ? 'Oui' : 'Non'}
+                                </span>
+                              </td>
+                              <td className="px-3 py-2 text-sm text-gray-500">
+                                {column.column_default ? (
+                                  <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">
+                                    {column.column_default}
+                                  </code>
+                                ) : (
+                                  '-'
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* Table Data */}
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <h5 className="text-sm font-medium text-gray-900 flex items-center">
+                        <Icons.Eye className="w-4 h-4 mr-2" />
+                        Données de la Table ({table.tableData.length} ligne{table.tableData.length !== 1 ? 's' : ''})
+                      </h5>
+                      {table.tableData.length > 0 && (
+                        <span className="text-xs text-gray-500">
+                          Triées par ordre chronologique
+                        </span>
+                      )}
+                    </div>
+                    
+                    {table.tableData.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
+                        <Icons.Database className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                        <p>Aucune donnée dans cette table</p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto max-h-96 overflow-y-auto border border-gray-200 rounded">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-100 sticky top-0">
+                            <tr>
+                              {table.columnDetails.map((column: any, index: number) => (
+                                <th 
+                                  key={index}
+                                  className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-r border-gray-200 last:border-r-0"
+                                >
+                                  <div className="flex flex-col">
+                                    <span>{column.column_name}</span>
+                                    <span className="text-xs normal-case text-gray-500 font-normal">
+                                      {column.data_type}
+                                    </span>
+                                  </div>
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {table.tableData.map((row: any, rowIndex: number) => (
+                              <tr key={rowIndex} className="hover:bg-gray-50">
+                                {table.columnDetails.map((column: any, colIndex: number) => {
+                                  const value = row[column.column_name]
+                                  const isDate = column.data_type.includes('timestamp') || column.column_name.includes('_at')
+                                  const isNumber = ['integer', 'bigint', 'numeric', 'decimal', 'real', 'double'].some(type => column.data_type.includes(type))
+                                  const isBoolean = column.data_type === 'boolean'
+                                  const isJson = column.data_type === 'json' || column.data_type === 'jsonb'
+                                  
+                                  return (
+                                    <td 
+                                      key={colIndex}
+                                      className="px-3 py-2 text-sm border-r border-gray-200 last:border-r-0 max-w-xs"
+                                    >
+                                      {value === null || value === undefined ? (
+                                        <span className="text-gray-400 italic">null</span>
+                                      ) : isDate && value ? (
+                                        <span className="text-blue-600">
+                                          {new Date(value).toLocaleString('fr-FR')}
+                                        </span>
+                                      ) : isNumber ? (
+                                        <span className="text-purple-600 font-mono">
+                                          {value.toLocaleString()}
+                                        </span>
+                                      ) : isBoolean ? (
+                                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                          value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                        }`}>
+                                          {value ? 'true' : 'false'}
+                                        </span>
+                                      ) : isJson ? (
+                                        <details className="cursor-pointer">
+                                          <summary className="text-orange-600 font-mono text-xs">JSON</summary>
+                                          <pre className="text-xs mt-1 bg-gray-100 p-2 rounded overflow-auto max-h-32">
+                                            {JSON.stringify(value, null, 2)}
+                                          </pre>
+                                        </details>
+                                      ) : typeof value === 'string' && value.length > 50 ? (
+                                        <div className="group relative">
+                                          <span className="truncate block">{value.substring(0, 50)}...</span>
+                                          <div className="invisible group-hover:visible absolute z-10 w-64 p-2 bg-gray-900 text-white text-xs rounded shadow-lg -top-2 left-0">
+                                            {value}
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <span className="break-words">
+                                          {String(value)}
+                                        </span>
+                                      )}
+                                    </td>
+                                  )
+                                })}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -2131,27 +2245,8 @@ function SettingsManager() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [settings, setSettings] = useState<any>({})
-  const [formData, setFormData] = useState({
-    site_name_fr: '',
-    site_name_ar: '',
-    site_description_fr: '',
-    site_description_ar: '',
-    business_address_fr: '',
-    business_address_ar: '',
-    business_phone: '',
-    business_email: '',
-    business_hours: '',
-    whatsapp_number: '',
-    facebook_url: '',
-    instagram_url: '',
-    featured_products_count: '6',
-    products_per_page: '12',
-    meta_description_fr: '',
-    meta_description_ar: '',
-    footer_text_fr: '',
-    footer_text_ar: '',
-    maintenance_mode: 'false'
-  })
+  const [originalSettings, setOriginalSettings] = useState<any>({})
+  const [hasChanges, setHasChanges] = useState(false)
 
   useEffect(() => {
     fetchSettings()
@@ -2164,11 +2259,7 @@ function SettingsManager() {
       if (response && response.ok) {
         const data = await response.json()
         setSettings(data)
-        // Populate form with existing settings
-        setFormData(prev => ({
-          ...prev,
-          ...data
-        }))
+        setOriginalSettings({ ...data })
       } else {
         toast.error('Erreur lors du chargement des paramètres')
       }
@@ -2180,6 +2271,15 @@ function SettingsManager() {
     }
   }
 
+  const handleSettingChange = (key: string, value: string) => {
+    const newSettings = { ...settings, [key]: value }
+    setSettings(newSettings)
+    
+    // Check if there are changes
+    const changed = Object.keys(newSettings).some(k => newSettings[k] !== originalSettings[k])
+    setHasChanges(changed)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -2188,13 +2288,14 @@ function SettingsManager() {
       const authenticatedFetch = createAuthenticatedFetch()
       const response = await authenticatedFetch('/api/settings', {
         method: 'PUT',
-        body: JSON.stringify({ settings: formData })
+        body: JSON.stringify({ settings })
       })
 
       if (response && response.ok) {
         const data = await response.json()
-        toast.success(data.message)
-        setSettings(formData)
+        toast.success(data.message || 'Paramètres sauvegardés avec succès!')
+        setOriginalSettings({ ...settings })
+        setHasChanges(false)
       } else {
         const errorData = response ? await response.json() : { error: 'Erreur inconnue' }
         toast.error(errorData.error || 'Erreur lors de la sauvegarde')
@@ -2208,11 +2309,89 @@ function SettingsManager() {
   }
 
   const handleReset = () => {
-    setFormData(prev => ({
-      ...prev,
-      ...settings
-    }))
+    setSettings({ ...originalSettings })
+    setHasChanges(false)
     toast.success('Modifications annulées')
+  }
+
+  const addNewSetting = () => {
+    const key = prompt('Nom de la nouvelle clé de paramètre:')
+    if (key && key.trim()) {
+      const cleanKey = key.trim().toLowerCase().replace(/\s+/g, '_')
+      if (!settings[cleanKey]) {
+        handleSettingChange(cleanKey, '')
+      } else {
+        toast.error('Cette clé existe déjà')
+      }
+    }
+  }
+
+  const deleteSetting = (key: string) => {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer le paramètre "${key}" ?`)) {
+      const newSettings = { ...settings }
+      delete newSettings[key]
+      setSettings(newSettings)
+      setHasChanges(true)
+    }
+  }
+
+  const getFieldType = (key: string, value: string) => {
+    if (key.includes('email')) return 'email'
+    if (key.includes('phone') || key.includes('whatsapp')) return 'tel'
+    if (key.includes('url') || key.includes('link')) return 'url'
+    if (key.includes('count') || key.includes('number') || key.includes('limit')) return 'number'
+    if (key.includes('description') || key.includes('address') || key.includes('text') || value.length > 100) return 'textarea'
+    if (key.includes('enable') || key.includes('active') || key.includes('mode')) return 'checkbox'
+    return 'text'
+  }
+
+  const formatLabel = (key: string) => {
+    return key
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
+  const groupSettings = (settingsObj: any) => {
+    const groups: any = {
+      'Site': [],
+      'Business': [],
+      'Contact': [],
+      'Social': [],
+      'Display': [],
+      'SEO': [],
+      'System': [],
+      'Other': []
+    }
+
+    Object.keys(settingsObj).forEach(key => {
+      if (key.includes('site_') || key.includes('name') || key.includes('title')) {
+        groups.Site.push(key)
+      } else if (key.includes('business_') || key.includes('company') || key.includes('address')) {
+        groups.Business.push(key)
+      } else if (key.includes('phone') || key.includes('email') || key.includes('contact')) {
+        groups.Contact.push(key)
+      } else if (key.includes('facebook') || key.includes('instagram') || key.includes('social') || key.includes('whatsapp')) {
+        groups.Social.push(key)
+      } else if (key.includes('display') || key.includes('count') || key.includes('per_page') || key.includes('limit')) {
+        groups.Display.push(key)
+      } else if (key.includes('meta_') || key.includes('seo_') || key.includes('keywords')) {
+        groups.SEO.push(key)
+      } else if (key.includes('system_') || key.includes('maintenance') || key.includes('debug')) {
+        groups.System.push(key)
+      } else {
+        groups.Other.push(key)
+      }
+    })
+
+    // Remove empty groups
+    Object.keys(groups).forEach(groupName => {
+      if (groups[groupName].length === 0) {
+        delete groups[groupName]
+      }
+    })
+
+    return groups
   }
 
   if (loading) {
@@ -2226,6 +2405,9 @@ function SettingsManager() {
     )
   }
 
+  const settingsGroups = groupSettings(settings)
+  const settingsCount = Object.keys(settings).length
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
@@ -2234,355 +2416,162 @@ function SettingsManager() {
             <Icons.Settings className="w-6 h-6 mr-2" />
             Paramètres du Site
           </h2>
-          <p className="text-gray-600 mt-1">Gérez les paramètres généraux de votre site web El Jarda</p>
+          <p className="text-gray-600 mt-1">
+            Gérez tous les paramètres de votre site El Jarda ({settingsCount} paramètre{settingsCount !== 1 ? 's' : ''})
+          </p>
+        </div>
+        <div className="flex space-x-3">
+          <button
+            onClick={addNewSetting}
+            className="btn-secondary flex items-center space-x-2"
+          >
+            <Icons.Plus className="w-4 h-4" />
+            <span>Ajouter</span>
+          </button>
+          <button
+            onClick={fetchSettings}
+            className="btn-secondary flex items-center space-x-2"
+          >
+            <Icons.TrendUp className="w-4 h-4" />
+            <span>Actualiser</span>
+          </button>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Site Information */}
-        <div className="bg-white rounded-lg shadow border border-gray-200">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Informations du Site</h3>
-          </div>
-          <div className="p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nom du Site (Français)
-                </label>
-                <input
-                  type="text"
-                  value={formData.site_name_fr}
-                  onChange={(e) => setFormData({ ...formData, site_name_fr: e.target.value })}
-                  className="input-field"
-                  placeholder="El Jarda"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  اسم الموقع (العربية)
-                </label>
-                <input
-                  type="text"
-                  value={formData.site_name_ar}
-                  onChange={(e) => setFormData({ ...formData, site_name_ar: e.target.value })}
-                  className="input-field arabic-text"
-                  placeholder="الجردة"
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description (Français)
-                </label>
-                <textarea
-                  value={formData.site_description_fr}
-                  onChange={(e) => setFormData({ ...formData, site_description_fr: e.target.value })}
-                  rows={3}
-                  className="input-field"
-                  placeholder="Votre description en français..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  الوصف (العربية)
-                </label>
-                <textarea
-                  value={formData.site_description_ar}
-                  onChange={(e) => setFormData({ ...formData, site_description_ar: e.target.value })}
-                  rows={3}
-                  className="input-field arabic-text"
-                  placeholder="الوصف باللغة العربية..."
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Business Information */}
-        <div className="bg-white rounded-lg shadow border border-gray-200">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Informations Commerciales</h3>
-          </div>
-          <div className="p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Adresse (Français)
-                </label>
-                <textarea
-                  value={formData.business_address_fr}
-                  onChange={(e) => setFormData({ ...formData, business_address_fr: e.target.value })}
-                  rows={2}
-                  className="input-field"
-                  placeholder="123 Rue Exemple, Ville, Pays"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  العنوان (العربية)
-                </label>
-                <textarea
-                  value={formData.business_address_ar}
-                  onChange={(e) => setFormData({ ...formData, business_address_ar: e.target.value })}
-                  rows={2}
-                  className="input-field arabic-text"
-                  placeholder="١٢٣ شارع المثال، المدينة، البلد"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Téléphone
-                </label>
-                <input
-                  type="tel"
-                  value={formData.business_phone}
-                  onChange={(e) => setFormData({ ...formData, business_phone: e.target.value })}
-                  className="input-field"
-                  placeholder="+216 XX XXX XXX"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  value={formData.business_email}
-                  onChange={(e) => setFormData({ ...formData, business_email: e.target.value })}
-                  className="input-field"
-                  placeholder="contact@eljarda.com"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  WhatsApp
-                </label>
-                <input
-                  type="tel"
-                  value={formData.whatsapp_number}
-                  onChange={(e) => setFormData({ ...formData, whatsapp_number: e.target.value })}
-                  className="input-field"
-                  placeholder="+216 XX XXX XXX"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Horaires d'ouverture
-              </label>
-              <textarea
-                value={formData.business_hours}
-                onChange={(e) => setFormData({ ...formData, business_hours: e.target.value })}
-                rows={3}
-                className="input-field"
-                placeholder="Lun-Ven: 8h00-18h00&#10;Sam: 8h00-14h00&#10;Dim: Fermé"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Social Media & Links */}
-        <div className="bg-white rounded-lg shadow border border-gray-200">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Réseaux Sociaux</h3>
-          </div>
-          <div className="p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Facebook URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.facebook_url}
-                  onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
-                  className="input-field"
-                  placeholder="https://facebook.com/eljarda"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Instagram URL
-                </label>
-                <input
-                  type="url"
-                  value={formData.instagram_url}
-                  onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
-                  className="input-field"
-                  placeholder="https://instagram.com/eljarda"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Display Settings */}
-        <div className="bg-white rounded-lg shadow border border-gray-200">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Paramètres d'Affichage</h3>
-          </div>
-          <div className="p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre de produits en vedette
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={formData.featured_products_count}
-                  onChange={(e) => setFormData({ ...formData, featured_products_count: e.target.value })}
-                  className="input-field"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Produits par page
-                </label>
-                <input
-                  type="number"
-                  min="6"
-                  max="50"
-                  value={formData.products_per_page}
-                  onChange={(e) => setFormData({ ...formData, products_per_page: e.target.value })}
-                  className="input-field"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* SEO Settings */}
-        <div className="bg-white rounded-lg shadow border border-gray-200">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Paramètres SEO</h3>
-          </div>
-          <div className="p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Meta Description (Français)
-                </label>
-                <textarea
-                  value={formData.meta_description_fr}
-                  onChange={(e) => setFormData({ ...formData, meta_description_fr: e.target.value })}
-                  rows={3}
-                  className="input-field"
-                  placeholder="Description pour les moteurs de recherche..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Meta Description (العربية)
-                </label>
-                <textarea
-                  value={formData.meta_description_ar}
-                  onChange={(e) => setFormData({ ...formData, meta_description_ar: e.target.value })}
-                  rows={3}
-                  className="input-field arabic-text"
-                  placeholder="وصف لمحركات البحث..."
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Settings */}
-        <div className="bg-white rounded-lg shadow border border-gray-200">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Paramètres du Pied de Page</h3>
-          </div>
-          <div className="p-6 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Texte du Footer (Français)
-                </label>
-                <textarea
-                  value={formData.footer_text_fr}
-                  onChange={(e) => setFormData({ ...formData, footer_text_fr: e.target.value })}
-                  rows={2}
-                  className="input-field"
-                  placeholder="© 2025 El Jarda. Tous droits réservés."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  نص التذييل (العربية)
-                </label>
-                <textarea
-                  value={formData.footer_text_ar}
-                  onChange={(e) => setFormData({ ...formData, footer_text_ar: e.target.value })}
-                  rows={2}
-                  className="input-field arabic-text"
-                  placeholder="© ٢٠٢٥ الجردة. جميع الحقوق محفوظة."
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* System Settings */}
-        <div className="bg-white rounded-lg shadow border border-gray-200">
-          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">Paramètres Système</h3>
-          </div>
-          <div className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">Mode Maintenance</h4>
-                <p className="text-sm text-gray-500">Activer pour fermer temporairement le site aux visiteurs</p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.maintenance_mode === 'true'}
-                  onChange={(e) => setFormData({ ...formData, maintenance_mode: e.target.checked ? 'true' : 'false' })}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+      {settingsCount === 0 ? (
+        <div className="bg-white p-8 rounded-lg shadow text-center">
+          <Icons.Settings className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Aucun paramètre trouvé</h3>
+          <p className="text-gray-500 mb-4">Commencez par ajouter votre premier paramètre de site</p>
           <button
-            type="button"
-            onClick={handleReset}
-            className="btn-secondary"
-            disabled={saving}
+            onClick={addNewSetting}
+            className="btn-primary flex items-center space-x-2 mx-auto"
           >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            disabled={saving}
-            className="btn-primary flex items-center space-x-2"
-          >
-            {saving ? (
-              <>
-                <div className="loader w-4 h-4"></div>
-                <span>Sauvegarde...</span>
-              </>
-            ) : (
-              <>
-                <Icons.Check className="w-4 h-4" />
-                <span>Sauvegarder les paramètres</span>
-              </>
-            )}
+            <Icons.Plus className="w-4 h-4" />
+            <span>Ajouter un paramètre</span>
           </button>
         </div>
-      </form>
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {Object.keys(settingsGroups).map(groupName => (
+            <div key={groupName} className="bg-white rounded-lg shadow border border-gray-200">
+              <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900 flex items-center">
+                  <Icons.Database className="w-5 h-5 mr-2" />
+                  {groupName} ({settingsGroups[groupName].length})
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {settingsGroups[groupName].map((key: string) => {
+                    const fieldType = getFieldType(key, settings[key] || '')
+                    const isArabic = key.includes('_ar') || key.includes('arabic')
+                    
+                    return (
+                      <div key={key} className={fieldType === 'textarea' ? 'md:col-span-2' : ''}>
+                        <div className="flex justify-between items-center mb-2">
+                          <label className="block text-sm font-medium text-gray-700">
+                            {formatLabel(key)}
+                            <span className="text-xs text-gray-500 ml-2">({key})</span>
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => deleteSetting(key)}
+                            className="text-red-500 hover:text-red-700 text-xs"
+                          >
+                            <Icons.Delete className="w-4 h-4" />
+                          </button>
+                        </div>
+                        
+                        {fieldType === 'textarea' ? (
+                          <textarea
+                            value={settings[key] || ''}
+                            onChange={(e) => handleSettingChange(key, e.target.value)}
+                            rows={3}
+                            className={`input-field ${isArabic ? 'arabic-text' : ''}`}
+                            placeholder={`Entrez ${formatLabel(key).toLowerCase()}...`}
+                          />
+                        ) : fieldType === 'checkbox' ? (
+                          <div className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={settings[key] === 'true' || settings[key] === '1' || settings[key] === 'on'}
+                              onChange={(e) => handleSettingChange(key, e.target.checked ? 'true' : 'false')}
+                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            />
+                            <span className="ml-2 text-sm text-gray-600">Activé</span>
+                          </div>
+                        ) : (
+                          <input
+                            type={fieldType}
+                            value={settings[key] || ''}
+                            onChange={(e) => handleSettingChange(key, e.target.value)}
+                            className={`input-field ${isArabic ? 'arabic-text' : ''}`}
+                            placeholder={`Entrez ${formatLabel(key).toLowerCase()}...`}
+                          />
+                        )}
+                        
+                        {/* Show current vs original value if different */}
+                        {originalSettings[key] && settings[key] !== originalSettings[key] && (
+                          <div className="mt-1 text-xs text-amber-600">
+                            Valeur originale: {originalSettings[key]}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* Action Buttons */}
+          <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+            <div className="text-sm text-gray-500">
+              {hasChanges ? (
+                <span className="text-amber-600 font-medium">
+                  <Icons.Edit className="w-4 h-4 inline mr-1" />
+                  Modifications non sauvegardées
+                </span>
+              ) : (
+                <span className="text-green-600">
+                  <Icons.Check className="w-4 h-4 inline mr-1" />
+                  Tous les paramètres sont sauvegardés
+                </span>
+              )}
+            </div>
+            <div className="flex space-x-4">
+              {hasChanges && (
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="btn-secondary"
+                  disabled={saving}
+                >
+                  Annuler
+                </button>
+              )}
+              <button
+                type="submit"
+                disabled={saving || !hasChanges}
+                className="btn-primary flex items-center space-x-2"
+              >
+                {saving ? (
+                  <>
+                    <div className="loader w-4 h-4"></div>
+                    <span>Sauvegarde...</span>
+                  </>
+                ) : (
+                  <>
+                    <Icons.Check className="w-4 h-4" />
+                    <span>Sauvegarder les paramètres</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
     </div>
   )
 }

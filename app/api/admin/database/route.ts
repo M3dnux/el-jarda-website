@@ -38,11 +38,31 @@ export async function GET(request: NextRequest) {
             ORDER BY ordinal_position
           `
 
+          // Get ALL data from the table (not just samples)
+          let tableData = []
+          try {
+            tableData = await sql.unsafe(`
+              SELECT * FROM ${table.table_name} 
+              ORDER BY 
+                CASE 
+                  WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = '${table.table_name}' AND column_name = 'created_at') 
+                  THEN created_at 
+                  WHEN EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = '${table.table_name}' AND column_name = 'id') 
+                  THEN id 
+                  ELSE (SELECT column_name FROM information_schema.columns WHERE table_name = '${table.table_name}' ORDER BY ordinal_position LIMIT 1)
+                END DESC
+            `)
+          } catch (error) {
+            console.error(`Error fetching data for ${table.table_name}:`, error)
+            tableData = []
+          }
+
           return {
             name: table.table_name,
             rowCount: table.row_count || 0,
             columns: columns.length,
-            columnDetails: columns
+            columnDetails: columns,
+            tableData: tableData
           }
         } catch (error) {
           console.error(`Error getting details for table ${table.table_name}:`, error)
@@ -50,7 +70,8 @@ export async function GET(request: NextRequest) {
             name: table.table_name,
             rowCount: 0,
             columns: 0,
-            columnDetails: []
+            columnDetails: [],
+            tableData: []
           }
         }
       })

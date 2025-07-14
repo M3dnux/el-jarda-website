@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import sql from '../../../lib/db'
 import { validateAdminToken, createAuthResponse } from '../../../lib/middleware'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Validate admin token for reading settings
+  const authResult = await validateAdminToken(request)
+  if (!authResult.valid) {
+    return createAuthResponse(authResult.error || 'Non autorisé')
+  }
+
   try {
     const settings = await sql`
       SELECT key, value, description FROM settings
@@ -34,12 +40,12 @@ export async function PUT(request: NextRequest) {
 
     for (const [key, value] of Object.entries(settings)) {
       await sql`
-        INSERT INTO settings (key, value, updated_at)
-        VALUES (${key}, ${value as string}, CURRENT_TIMESTAMP)
+        INSERT INTO settings (key, value, description, created_at, updated_at)
+        VALUES (${key}, ${value as string}, '', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         ON CONFLICT (key) 
         DO UPDATE SET 
           value = EXCLUDED.value,
-          updated_at = EXCLUDED.updated_at
+          updated_at = CURRENT_TIMESTAMP
       `
     }
 
