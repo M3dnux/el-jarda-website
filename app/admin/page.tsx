@@ -1772,61 +1772,127 @@ function MessagesManager() {
   }
   
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Messages de Contact</h2>
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Contact
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Type
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Message
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {messages.map((message: any) => (
-              <tr key={message.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {message.name}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {message.email}
-                  </div>
-                  {message.phone && (
-                    <div className="text-sm text-gray-500">
-                      {message.phone}
-                    </div>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    message.type === 'appointment'
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-green-100 text-green-800'
-                  }`}>
-                    {message.type === 'appointment' ? 'Rendez-vous' : 'Question'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                  {message.message}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(message.created_at).toLocaleDateString('fr-FR')}
-                </td>
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
+      <h2 className="text-xl md:text-2xl font-bold text-gray-900">Messages de Contact</h2>
+      
+      {/* Mobile Card Layout */}
+      <div className="block md:hidden space-y-4">
+        {messages.map((message: any) => (
+          <div key={message.id} className="bg-white shadow rounded-lg p-4 border border-gray-200">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <h3 className="text-sm font-medium text-gray-900">{message.name}</h3>
+                <p className="text-sm text-gray-600">{message.email}</p>
+                {message.phone && (
+                  <p className="text-sm text-gray-600">{message.phone}</p>
+                )}
+              </div>
+              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                message.type === 'appointment'
+                  ? 'bg-blue-100 text-blue-800'
+                  : 'bg-green-100 text-green-800'
+              }`}>
+                {message.type === 'appointment' ? 'Rendez-vous' : 'Question'}
+              </span>
+            </div>
+            
+            <div className="mb-3">
+              <p className="text-sm text-gray-900 leading-relaxed">{message.message}</p>
+            </div>
+            
+            <div className="text-xs text-gray-500">
+              {new Date(message.created_at).toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </div>
+          </div>
+        ))}
+        
+        {messages.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            <Icons.Messages className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+            <p>Aucun message pour le moment</p>
+          </div>
+        )}
+      </div>
+      
+      {/* Desktop Table Layout */}
+      <div className="hidden md:block bg-white shadow rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Contact
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Type
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Message
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {messages.map((message: any) => (
+                <tr key={message.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {message.name}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {message.email}
+                    </div>
+                    {message.phone && (
+                      <div className="text-sm text-gray-500">
+                        {message.phone}
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      message.type === 'appointment'
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'bg-green-100 text-green-800'
+                    }`}>
+                      {message.type === 'appointment' ? 'Rendez-vous' : 'Question'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    <div className="max-w-xs lg:max-w-md">
+                      <p className="truncate" title={message.message}>
+                        {message.message}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(message.created_at).toLocaleDateString('fr-FR', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          {messages.length === 0 && (
+            <div className="text-center py-12 text-gray-500">
+              <Icons.Messages className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+              <p>Aucun message pour le moment</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
