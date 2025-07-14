@@ -1606,6 +1606,198 @@ function CategoriesManager() {
             <div className="flex justify-end pt-6 border-t border-gray-200">
               <button
                 type="submit"
+                className="btn-primary flex items-center space-x-2"
+              >
+                <Icons.Check className="w-4 h-4" />
+                <span>{editingCategory ? 'Modifier' : 'Créer'} la catégorie</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Categories List */}
+      <div className="bg-white rounded-lg shadow-md border border-gray-200">
+        <div className="overflow-x-auto">
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Nom (FR)</th>
+                <th>Nom (AR)</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCategories.map((category) => (
+                <tr key={category.id}>
+                  <td className="font-medium">{category.name_fr}</td>
+                  <td className="arabic-text">{category.name_ar}</td>
+                  <td className="text-gray-600 max-w-xs truncate">
+                    {category.description_fr || 'Aucune description'}
+                  </td>
+                  <td>
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleEditCategory(category)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Modifier"
+                      >
+                        <Icons.Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteCategory(category.id)}
+                        className={`p-2 rounded-lg transition-colors ${
+                          deleteConfirm === category.id
+                            ? 'text-white bg-red-600 hover:bg-red-700'
+                            : 'text-red-600 hover:bg-red-50'
+                        }`}
+                        title={deleteConfirm === category.id ? 'Confirmer la suppression' : 'Supprimer'}
+                      >
+                        <Icons.Delete className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          {filteredCategories.length === 0 && (
+            <div className="text-center py-12">
+              <Icons.Categories className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Aucune catégorie</h3>
+              <p className="text-gray-600 mb-4">Commencez par créer votre première catégorie</p>
+              <button
+                onClick={() => setShowForm(true)}
+                className="btn-primary inline-flex items-center space-x-2"
+              >
+                <Icons.Plus className="w-4 h-4" />
+                <span>Créer une catégorie</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Component placeholders for missing functions
+function ForgotPasswordLink() {
+  return (
+    <a href="/admin/reset-password" className="text-sm text-blue-600 hover:text-blue-800">
+      Mot de passe oublié ?
+    </a>
+  )
+}
+
+function MessagesManager() {
+  return (
+    <div className="p-4">
+      <h3 className="text-lg font-semibold mb-4">Gestion des Messages</h3>
+      <p className="text-gray-600">Fonctionnalité de gestion des messages en cours de développement.</p>
+    </div>
+  )
+}
+
+function DatabaseOverview() {
+  return (
+    <div className="p-4">
+      <h3 className="text-lg font-semibold mb-4">Aperçu de la Base de Données</h3>
+      <p className="text-gray-600">Statistiques et aperçu de la base de données.</p>
+    </div>
+  )
+}
+
+function PasswordManager() {
+  return (
+    <div className="p-4">
+      <h3 className="text-lg font-semibold mb-4">Gestion du Mot de Passe</h3>
+      <p className="text-gray-600">Fonctionnalité de changement de mot de passe en cours de développement.</p>
+    </div>
+  )
+}
+
+function SettingsManager() {
+  const [saving, setSaving] = useState(false)
+  const [formData, setFormData] = useState({
+    name_fr: '',
+    name_ar: '',
+    description_fr: '',
+    description_ar: ''
+  })
+
+  return (
+    <div className="p-6 space-y-6">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+            <Icons.Settings className="w-6 h-6 mr-2" />
+            Paramètres du Site
+          </h2>
+          <p className="text-gray-600 mt-1">Gérez les paramètres généraux de votre site web</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-md border border-gray-200">
+        <div className="p-6">
+          <form className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom (Français)
+                </label>
+                <input
+                  type="text"
+                  value={formData.name_fr}
+                  onChange={(e) => setFormData({ ...formData, name_fr: e.target.value })}
+                  className="input-field"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  اسم (العربية)
+                </label>
+                <input
+                  type="text"
+                  value={formData.name_ar}
+                  onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
+                  className="input-field arabic-text"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description (Français)
+                </label>
+                <textarea
+                  value={formData.description_fr}
+                  onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
+                  rows={4}
+                  className="input-field"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  وصف (العربية)
+                </label>
+                <textarea
+                  value={formData.description_ar}
+                  onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
+                  rows={4}
+                  className="input-field arabic-text"
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-end pt-6 border-t border-gray-200">
+              <button
+                type="submit"
                 disabled={saving}
                 className="btn-primary flex items-center space-x-2"
               >
