@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sql from '../../../../lib/db'
-import { verifyPassword } from '../../../../lib/auth'
+import { verifyPassword, generateToken } from '../../../../lib/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,9 +26,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Identifiants incorrects' }, { status: 401 })
     }
 
+    // Generate JWT token
+    const token = generateToken(user.id.toString())
+
+    // Update last login
+    await sql`
+      UPDATE users 
+      SET updated_at = CURRENT_TIMESTAMP 
+      WHERE id = ${user.id}
+    `
+
     return NextResponse.json({ 
       success: true, 
       message: 'Connexion réussie',
+      token,
       user: {
         id: user.id,
         email: user.email,

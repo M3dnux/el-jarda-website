@@ -1,14 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sql from '../../../../lib/db'
 import { hashPassword, verifyPassword } from '../../../../lib/auth'
+import { validateAdminToken, createAuthResponse } from '../../../../lib/middleware'
 
 export async function POST(request: NextRequest) {
+  // Validate admin token
+  const authResult = await validateAdminToken(request)
+  if (!authResult.valid) {
+    return createAuthResponse(authResult.error || 'Non autorisé')
+  }
+
   try {
     const body = await request.json()
-    const { currentPassword, newPassword, email } = body
+    const { currentPassword, newPassword } = body
+
+    // Use authenticated user's email from token
+    const email = authResult.user.email
 
     // Validate input
-    if (!currentPassword || !newPassword || !email) {
+    if (!currentPassword || !newPassword) {
       return NextResponse.json({ error: 'Tous les champs sont requis' }, { status: 400 })
     }
 

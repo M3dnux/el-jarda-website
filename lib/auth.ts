@@ -10,7 +10,7 @@ export const verifyPassword = async (password: string, hashedPassword: string): 
 }
 
 export const generateToken = (userId: string): string => {
-  return jwt.sign({ userId }, process.env.NEXTAUTH_SECRET as string, { expiresIn: '7d' })
+  return jwt.sign({ userId }, process.env.NEXTAUTH_SECRET as string, { expiresIn: '1d' })
 }
 
 export const verifyToken = (token: string): any => {

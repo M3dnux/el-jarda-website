@@ -25,7 +25,6 @@ const translations = {
     services: 'Services',
     products: 'Produits',
     about: 'À propos',
-    address: 'Route Teniour Km 6, Chihia, Sfax',
     rights: 'Tous droits réservés.',
     followUs: 'Suivez-nous'
   },
@@ -36,7 +35,6 @@ const translations = {
     services: 'الخدمات',
     products: 'المنتجات',
     about: 'حولنا',
-    address: 'طريق تنيور كم 6، شيحية، صفاقس',
     rights: 'جميع الحقوق محفوظة.',
     followUs: 'تابعنا'
   }
@@ -78,7 +76,7 @@ export default function Footer({ language }: FooterProps) {
       : '26 503 701 / 40 279 250'
 
     return {
-      address: settings.business_address || translations[language].address,
+      address: settings.business_address || 'Route Teniour Km 6, Chihia, Sfax',
       phone: phoneDisplay,
       email: settings.business_email || 'contact@eljarda.com'
     }

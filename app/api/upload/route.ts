@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { validateAdminToken, createAuthResponse } from '../../../lib/middleware'
 
 export async function POST(request: NextRequest) {
+  // Validate admin token for file uploads
+  const authResult = await validateAdminToken(request)
+  if (!authResult.valid) {
+    return createAuthResponse(authResult.error || 'Non autorisé')
+  }
+
   try {
     const data = await request.formData()
     const file: File | null = data.get('file') as unknown as File
@@ -28,8 +35,6 @@ export async function POST(request: NextRequest) {
     const base64Data = buffer.toString('base64')
     const mimeType = file.type
     const imageDataUrl = `data:${mimeType};base64,${base64Data}`
-    
-    console.log('Image converted to base64, size:', base64Data.length, 'bytes')
     
     // Return the base64 data URL that can be stored directly in database
     return NextResponse.json({ 

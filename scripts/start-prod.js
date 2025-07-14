@@ -29,9 +29,6 @@ async function main() {
     if (process.env.NODE_ENV === 'production') {
       console.log('📊 Running database migrations...');
       await runCommand('npx', ['tsx', 'scripts/migrate.ts']);
-      
-      console.log('🌱 Running database seed...');
-      await runCommand('npx', ['tsx', 'scripts/seed.ts']);
     }
     
     console.log('🎯 Starting Next.js server...');

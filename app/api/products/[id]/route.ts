@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sql from '../../../../lib/db'
+import { validateAdminToken, createAuthResponse } from '../../../../lib/middleware'
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  // Validate admin token for updating products
+  const authResult = await validateAdminToken(request)
+  if (!authResult.valid) {
+    return createAuthResponse(authResult.error || 'Non autorisé')
+  }
+
   try {
     const id = params.id
     const body = await request.json()
@@ -36,6 +43,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  // Validate admin token for deleting products
+  const authResult = await validateAdminToken(request)
+  if (!authResult.valid) {
+    return createAuthResponse(authResult.error || 'Non autorisé')
+  }
+
   try {
     const id = params.id
 

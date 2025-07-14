@@ -1,100 +1,83 @@
-# El Jarda - Website pour Ayoub Zouch
+# El Jarda - Garden Maintenance & Landscaping Website
 
-Site web professionnel pour El Jarda, services de jardinage à Sfax, Tunisie.
+<div align="center">
 
-## Fonctionnalités
+![Next.js](https://img.shields.io/badge/Next.js-14.0.4-black?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.6-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
 
-- 🌱 Site vitrine bilingue (Français/Arabe)
-- 📱 Design responsive et moderne
-- 🛒 Catalogue de produits de jardinage
-- 📧 Formulaire de contact avec envoi d'emails
-- 🔧 Panel d'administration pour gérer les produits
-- 🔐 Système d'authentification sécurisé
-- 📊 Gestion des catégories et du stock
+</div>
 
-## Technologies
+A modern, bilingual (French/Arabic) website for a professional garden maintenance and landscaping business. Features a comprehensive admin panel for complete content management.
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
-- **Base de données**: PostgreSQL (Koyeb)
-- **Email**: Nodemailer avec Zoho Mail
-- **Authentification**: bcryptjs, JWT
-- **Hébergement**: Koyeb
+## ✨ Key Features
 
-## Variables d'environnement
+### For Visitors
+- **Bilingual Experience** - French/Arabic with RTL support
+- **Product Catalog** - Browse plants, tools, and supplies by category
+- **Contact Forms** - Direct communication with the business
+- **Responsive Design** - Perfect on all devices
 
-**IMPORTANT: PLUS DE VALEURS CODÉES EN DUR!**
+### For Business Owners
+- **Admin Dashboard** - Complete website management without technical knowledge
+- **Product Management** - Add/edit products with images and descriptions
+- **Message Center** - Handle customer inquiries
+- **Content Control** - Update business info, descriptions, and settings
 
-Toutes les données de configuration (informations commerciales, identifiants admin, contenu du site) sont maintenant stockées dans la base de données PostgreSQL via la table `settings`. 
+## 🛠️ Tech Stack
 
-Créez les variables d'environnement suivantes sur Koyeb :
+- **Frontend**: Next.js 14, React 18, TypeScript, Tailwind CSS
+- **Backend**: Node.js API routes, PostgreSQL database
+- **Security**: JWT authentication, bcrypt password hashing
+- **Features**: Framer Motion animations, React Hook Form, Email integration
+- **Deployment**: Koyeb/Heroku ready with SSL support
 
-```env
-DATABASE_HOST=ep-red-queen-a2fi4ulj.eu-central-1.pg.koyeb.app
-DATABASE_USER=koyeb-adm
-DATABASE_PASSWORD=npg_EOoCZqiS6de8
-DATABASE_NAME=koyebdb
+## 🏗️ Architecture
 
-EMAIL_HOST=smtp.zoho.com
-EMAIL_PORT=587
-EMAIL_USER=contact@eljarda.com
-EMAIL_PASS=sCqkTXLa3wUJ
+```
+app/
+├── page.tsx           # Bilingual homepage
+├── admin/page.tsx     # Protected admin dashboard
+└── api/               # Backend API routes
+    ├── admin/         # Admin management
+    ├── products/      # Product CRUD
+    ├── categories/    # Category management
+    └── contact/       # Contact form handler
 
-NEXTAUTH_SECRET=eljarda-secret-key-2025-ayoub-zouch-gardener-sfax
-NEXTAUTH_URL=https://eljarda.com
-
-ADMIN_EMAIL=admin@eljarda.com
-ADMIN_PASSWORD=ElJarda2025Admin!
+components/
+├── Header.tsx         # Navigation with language toggle
+├── Products.tsx       # Product catalog
+├── Contact.tsx        # Contact form
+└── ...               # Other UI components
 ```
 
-### Configuration dynamique
+## 🌐 Database Schema
 
-- **Informations commerciales**: Nom du propriétaire, adresse, téléphones, email
-- **Contenu du site**: Titres, descriptions, textes héro en français et arabe
-- **Réseaux sociaux**: URLs Facebook et Instagram
-- **Authentification admin**: Stockée de manière sécurisée avec hachage bcrypt
-- **Produits et catégories**: Entièrement gérés via la base de données
+- **users** - Admin authentication
+- **products** - Product catalog with images
+- **categories** - Product organization
+- **contact_messages** - Customer inquiries
+- **settings** - Site configuration
 
-## Déploiement sur Koyeb
+## 🚀 Deployment
 
-1. **Pousser le code sur GitHub**
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit - El Jarda website"
-   git branch -M main
-   git remote add origin https://github.com/votre-username/el-jarda-website.git
-   git push -u origin main
-   ```
+### Hosting
+- **Primary**: Koyeb (Node.js optimized)
+- **Alternative**: Heroku compatible
+- **Database**: PostgreSQL cloud (Neon, Supabase, Railway, AWS RDS)
+- **SSL**: Automatic HTTPS certificate management
 
-2. **Déployer sur Koyeb**
-   - Connectez votre repository GitHub à Koyeb
-   - Ajoutez toutes les variables d'environnement
-   - Le build et la migration de base de données se feront automatiquement
+## 🎯 Perfect For
 
-3. **Post-déploiement**
-   - Les tables de base de données seront créées automatiquement
-   - Un compte administrateur sera créé avec les identifiants configurés
-   - Le site sera accessible à votre URL Koyeb
+Garden maintenance businesses, plant nurseries, and any company needing:
+- Bilingual Arabic/French support
+- Professional web presence
+- Easy content management
+- Customer communication tools
 
-## Utilisation
+---
 
-### Interface utilisateur
-- Consultation des produits en français et arabe
-- Formulaire de contact pour questions et rendez-vous
-- Navigation intuitive et responsive
-
-### Panel d'administration
-- Accès via `/admin`
-- Gestion des produits (ajout, modification, stock)
-- Gestion des catégories
-- Consultation des messages de contact
-- Changement de mot de passe
-
-## Contact
-
-- **Jardinier**: Ayoub Zouch
-- **Email**: contact@eljarda.com
-- **Téléphone**: 26 503 701 / 40 279 250
-- **Adresse**: Route Teniour Km 6, Chihia, Sfax
-- **Facebook**: https://www.facebook.com/profile.php?id=61573780066854
-- **Instagram**: https://www.instagram.com/el_jarda/
+*Modern design meets powerful functionality - easy for businesses to showcase services while maintaining complete control over content.*

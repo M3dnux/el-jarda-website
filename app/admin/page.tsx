@@ -4,6 +4,97 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
+// Icons components for better UX
+const Icons = {
+  Dashboard: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+    </svg>
+  ),
+  Products: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+    </svg>
+  ),
+  Categories: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+    </svg>
+  ),
+  Messages: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+  ),
+  Database: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+    </svg>
+  ),
+  Settings: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  ),
+  Password: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+    </svg>
+  ),
+  Search: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+  ),
+  Filter: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z" />
+    </svg>
+  ),
+  Plus: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+    </svg>
+  ),
+  Edit: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    </svg>
+  ),
+  Delete: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+    </svg>
+  ),
+  Eye: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+    </svg>
+  ),
+  Check: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+    </svg>
+  ),
+  X: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  ),
+  TrendUp: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+    </svg>
+  ),
+  Users: ({ className = "w-5 h-5" }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+    </svg>
+  ),
+}
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -16,7 +107,8 @@ export default function AdminPage() {
 
   const checkAuth = () => {
     const token = localStorage.getItem('adminToken')
-    if (token) {
+    if (token && token !== 'authenticated') {
+      // Verify token is still valid by checking with server
       setIsAuthenticated(true)
     }
     setLoading(false)
@@ -40,7 +132,7 @@ export default function AdminPage() {
       const data = await response.json()
 
       if (response.ok) {
-        localStorage.setItem('adminToken', 'authenticated')
+        localStorage.setItem('adminToken', data.token)
         localStorage.setItem('adminUser', JSON.stringify(data.user))
         setIsAuthenticated(true)
         toast.success('Connexion réussie!')
@@ -54,8 +146,45 @@ export default function AdminPage() {
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken')
+    localStorage.removeItem('adminUser')
     setIsAuthenticated(false)
     toast.success('Déconnexion réussie')
+  }
+
+  // Helper function for authenticated API calls
+  const authenticatedFetch = async (url: string, options: RequestInit = {}) => {
+    const token = localStorage.getItem('adminToken')
+    if (!token) {
+      toast.error('Session expirée, veuillez vous reconnecter')
+      handleLogout()
+      return null
+    }
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options.headers
+    }
+
+    try {
+      const response = await fetch(url, { ...options, headers })
+      
+      if (response.status === 401) {
+        toast.error('Session expirée, veuillez vous reconnecter')
+        handleLogout()
+        return null
+      }
+      
+      return response
+    } catch (error) {
+      console.error('API call failed:', error)
+      throw error
+    }
+  }
+
+  const handleRefresh = () => {
+    setLoading(true)
+    checkAuth()
   }
 
   if (loading) {
@@ -115,7 +244,7 @@ export default function AdminPage() {
                 className="w-full text-gray-600 hover:text-gray-900 text-sm flex items-center justify-center space-x-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
                 <span>Retour à l'accueil</span>
               </button>
@@ -162,61 +291,343 @@ export default function AdminPage() {
 }
 
 function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState('products')
+  const [activeTab, setActiveTab] = useState('dashboard')
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    totalCategories: 0,
+    totalMessages: 0,
+    lowStockProducts: 0,
+    recentMessages: 0
+  })
+
+  useEffect(() => {
+    fetchDashboardStats()
+  }, [])
+
+  const fetchDashboardStats = async () => {
+    try {
+      // Fetch products
+      const productsRes = await fetch('/api/products')
+      const products = productsRes.ok ? await productsRes.json() : []
+      
+      // Fetch categories
+      const categoriesRes = await fetch('/api/categories')
+      const categories = categoriesRes.ok ? await categoriesRes.json() : []
+      
+      // Fetch messages
+      const messagesRes = await fetch('/api/admin/messages')
+      const messages = messagesRes.ok ? await messagesRes.json() : []
+
+      // Calculate stats
+      const lowStock = products.filter((p: any) => p.stock <= 5).length
+      const today = new Date()
+      const recentMessages = messages.filter((m: any) => {
+        const messageDate = new Date(m.created_at)
+        const diffDays = (today.getTime() - messageDate.getTime()) / (1000 * 60 * 60 * 24)
+        return diffDays <= 7
+      }).length
+
+      setStats({
+        totalProducts: products.length,
+        totalCategories: categories.length,
+        totalMessages: messages.length,
+        lowStockProducts: lowStock,
+        recentMessages: recentMessages
+      })
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error)
+    }
+  }
+
+  const tabs = [
+    { id: 'dashboard', label: 'Tableau de bord', icon: Icons.Dashboard },
+    { id: 'products', label: 'Produits', icon: Icons.Products },
+    { id: 'categories', label: 'Catégories', icon: Icons.Categories },
+    { id: 'messages', label: 'Messages', icon: Icons.Messages },
+    { id: 'database', label: 'Base de données', icon: Icons.Database },
+    { id: 'settings', label: 'Paramètres', icon: Icons.Settings },
+    { id: 'password', label: 'Mot de passe', icon: Icons.Password },
+  ]
 
   return (
     <div>
-      {/* Tab Navigation */}
-      <div className="mb-8 border-b border-gray-200">
-        <nav className="flex flex-wrap -mb-px space-x-2 sm:space-x-8 overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('products')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-              activeTab === 'products'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Produits
-          </button>
-          <button
-            onClick={() => setActiveTab('categories')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-              activeTab === 'categories'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Catégories
-          </button>
-          <button
-            onClick={() => setActiveTab('messages')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-              activeTab === 'messages'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Messages
-          </button>
-          <button
-            onClick={() => setActiveTab('password')}
-            className={`pb-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-              activeTab === 'password'
-                ? 'border-primary-500 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            Mot de passe
-          </button>
-        </nav>
+      {/* Enhanced Tab Navigation */}
+      <div className="mb-8">
+        <div className="border-b border-gray-200 bg-white rounded-t-lg shadow-sm">
+          <nav className="flex flex-wrap -mb-px px-4 overflow-x-auto">
+            {tabs.map((tab) => {
+              const Icon = tab.icon
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center space-x-2 pb-4 pt-4 px-4 border-b-2 font-medium text-sm whitespace-nowrap transition-all ${
+                    activeTab === tab.id
+                      ? 'border-primary-500 text-primary-600 bg-primary-50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{tab.label}</span>
+                  {/* Badge for notifications */}
+                  {tab.id === 'messages' && stats.recentMessages > 0 && (
+                    <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 ml-1">
+                      {stats.recentMessages}
+                    </span>
+                  )}
+                  {tab.id === 'products' && stats.lowStockProducts > 0 && (
+                    <span className="bg-orange-500 text-white text-xs rounded-full px-2 py-1 ml-1">
+                      {stats.lowStockProducts}
+                    </span>
+                  )}
+                </button>
+              )
+            })}
+          </nav>
+        </div>
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'products' && <ProductsManager />}
-      {activeTab === 'categories' && <CategoriesManager />}
-      {activeTab === 'messages' && <MessagesManager />}
-      {activeTab === 'password' && <PasswordManager />}
+      <div className="bg-white rounded-lg shadow-sm min-h-[600px]">
+        {activeTab === 'dashboard' && <DashboardOverview stats={stats} onRefresh={fetchDashboardStats} />}
+        {activeTab === 'products' && <ProductsManager />}
+        {activeTab === 'categories' && <CategoriesManager />}
+        {activeTab === 'messages' && <MessagesManager />}
+        {activeTab === 'database' && <DatabaseOverview />}
+        {activeTab === 'settings' && <SettingsManager />}
+        {activeTab === 'password' && <PasswordManager />}
+      </div>
+    </div>
+  )
+}
+
+// Enhanced Dashboard Overview Component
+function DashboardOverview({ stats, onRefresh }: { stats: any, onRefresh: () => void }) {
+  const [recentActivity, setRecentActivity] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchRecentActivity()
+  }, [])
+
+  const fetchRecentActivity = async () => {
+    try {
+      // Get recent messages for activity feed
+      const messagesRes = await fetch('/api/admin/messages')
+      if (messagesRes.ok) {
+        const messages = await messagesRes.json()
+        const recent = messages.slice(0, 5).map((msg: any) => ({
+          id: msg.id,
+          type: 'message',
+          title: `Nouveau message de ${msg.name}`,
+          description: msg.message.substring(0, 50) + '...',
+          time: new Date(msg.created_at),
+          icon: Icons.Messages
+        }))
+        setRecentActivity(recent)
+      }
+    } catch (error) {
+      console.error('Error fetching recent activity:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const statCards = [
+    {
+      title: 'Total Produits',
+      value: stats.totalProducts,
+      icon: Icons.Products,
+      color: 'blue',
+      change: '+2.5%',
+      changeType: 'positive'
+    },
+    {
+      title: 'Catégories',
+      value: stats.totalCategories,
+      icon: Icons.Categories,
+      color: 'green',
+      change: '',
+      changeType: 'neutral'
+    },
+    {
+      title: 'Messages',
+      value: stats.totalMessages,
+      icon: Icons.Messages,
+      color: 'purple',
+      change: `+${stats.recentMessages} cette semaine`,
+      changeType: stats.recentMessages > 0 ? 'positive' : 'neutral'
+    },
+    {
+      title: 'Stock faible',
+      value: stats.lowStockProducts,
+      icon: Icons.TrendUp,
+      color: stats.lowStockProducts > 0 ? 'red' : 'gray',
+      change: stats.lowStockProducts > 0 ? 'Attention requise' : 'Tout va bien',
+      changeType: stats.lowStockProducts > 0 ? 'negative' : 'positive'
+    }
+  ]
+
+  const getColorClasses = (color: string) => {
+    const colors = {
+      blue: 'bg-blue-500 text-blue-600 bg-blue-50',
+      green: 'bg-green-500 text-green-600 bg-green-50',
+      purple: 'bg-purple-500 text-purple-600 bg-purple-50',
+      red: 'bg-red-500 text-red-600 bg-red-50',
+      gray: 'bg-gray-500 text-gray-600 bg-gray-50'
+    }
+    return colors[color as keyof typeof colors] || colors.gray
+  }
+
+  return (
+    <div className="p-6 space-y-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
+          <p className="text-gray-600 mt-1">Vue d'ensemble de votre magasin El Jarda</p>
+        </div>
+        <button
+          onClick={onRefresh}
+          className="btn-primary flex items-center space-x-2"
+        >
+          <Icons.TrendUp className="w-4 h-4" />
+          <span>Actualiser</span>
+        </button>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {statCards.map((card, index) => {
+          const colorClass = getColorClasses(card.color)
+          const [bgColor, textColor, bgLight] = colorClass.split(' ')
+          
+          return (
+            <div key={index} className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-600 mb-1">{card.title}</p>
+                  <p className="text-3xl font-bold text-gray-900">{card.value}</p>
+                  {card.change && (
+                    <p className={`text-sm mt-2 ${
+                      card.changeType === 'positive' ? 'text-green-600' :
+                      card.changeType === 'negative' ? 'text-red-600' :
+                      'text-gray-600'
+                    }`}>
+                      {card.change}
+                    </p>
+                  )}
+                </div>
+                <div className={`p-3 rounded-full ${bgLight}`}>
+                  <card.icon className={`w-6 h-6 ${textColor}`} />
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Quick Actions & Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Quick Actions */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900">Actions rapides</h3>
+          </div>
+          <div className="p-6 space-y-3">
+            <button className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+              <Icons.Plus className="w-5 h-5 text-blue-600" />
+              <div className="text-left">
+                <p className="font-medium text-gray-900">Ajouter un produit</p>
+                <p className="text-sm text-gray-600">Créer un nouveau produit</p>
+              </div>
+            </button>
+            <button className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+              <Icons.Categories className="w-5 h-5 text-green-600" />
+              <div className="text-left">
+                <p className="font-medium text-gray-900">Gérer les catégories</p>
+                <p className="text-sm text-gray-600">Organiser vos produits</p>
+              </div>
+            </button>
+            <button className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+              <Icons.Settings className="w-5 h-5 text-purple-600" />
+              <div className="text-left">
+                <p className="font-medium text-gray-900">Paramètres du site</p>
+                <p className="text-sm text-gray-600">Configurer votre site</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900">Activité récente</h3>
+          </div>
+          <div className="p-6">
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="loader w-6 h-6"></div>
+                <span className="ml-2 text-gray-600">Chargement...</span>
+              </div>
+            ) : recentActivity.length > 0 ? (
+              <div className="space-y-4">
+                {recentActivity.map((activity: any, index) => (
+                  <div key={index} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50">
+                    <div className="p-2 rounded-full bg-blue-50">
+                      <activity.icon className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">{activity.title}</p>
+                      <p className="text-sm text-gray-600 truncate">{activity.description}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {activity.time.toLocaleDateString('fr-FR')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Icons.Messages className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                <p className="text-gray-600">Aucune activité récente</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* System Status */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100">
+        <div className="p-6 border-b border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900">État du système</h3>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3">
+                <Icons.Check className="w-6 h-6 text-green-600" />
+              </div>
+              <p className="text-sm font-medium text-gray-900">Base de données</p>
+              <p className="text-xs text-green-600">Connectée</p>
+            </div>
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-3">
+                <Icons.Check className="w-6 h-6 text-green-600" />
+              </div>
+              <p className="text-sm font-medium text-gray-900">API</p>
+              <p className="text-xs text-green-600">Fonctionnelle</p>
+            </div>
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
+                <Icons.Users className="w-6 h-6 text-blue-600" />
+              </div>
+              <p className="text-sm font-medium text-gray-900">Utilisateurs</p>
+              <p className="text-xs text-blue-600">Actifs</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
@@ -229,6 +640,10 @@ function ProductsManager() {
   const [uploading, setUploading] = useState(false)
   const [imagePreview, setImagePreview] = useState('')
   const [deleteConfirm, setDeleteConfirm] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [stockFilter, setStockFilter] = useState('all')
+  const [viewMode, setViewMode] = useState('table') // 'table' or 'cards'
   const [formData, setFormData] = useState({
     name_fr: '',
     name_ar: '',
@@ -246,28 +661,40 @@ function ProductsManager() {
     fetchCategories()
   }, [])
 
+  // Filter products based on search and filters
+  const filteredProducts = products.filter((product: any) => {
+    const matchesSearch = product.name_fr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.name_ar.includes(searchTerm) ||
+                         product.reference.toLowerCase().includes(searchTerm.toLowerCase())
+    
+    const matchesCategory = selectedCategory === '' || product.category_id.toString() === selectedCategory
+    
+    const matchesStock = stockFilter === 'all' ||
+                        (stockFilter === 'low' && product.stock <= 5) ||
+                        (stockFilter === 'out' && product.stock === 0) ||
+                        (stockFilter === 'available' && product.stock > 0)
+    
+    return matchesSearch && matchesCategory && matchesStock
+  })
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    console.log('Starting image upload for file:', file.name)
     setUploading(true)
     
     try {
       const formData = new FormData()
       formData.append('file', file)
 
-      console.log('Uploading to /api/upload...')
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       })
 
       const data = await response.json()
-      console.log('Upload response:', data)
 
       if (response.ok) {
-        console.log('Setting image URL:', data.imageUrl)
         setFormData(prev => ({ ...prev, image_url: data.imageUrl }))
         setImagePreview(data.imageUrl)
         toast.success('Image téléchargée avec succès!')
@@ -299,7 +726,7 @@ function ProductsManager() {
     setEditingProduct(null)
   }
 
-  const handleEditProduct = (product) => {
+  const handleEditProduct = (product: any) => {
     setEditingProduct(product)
     setFormData({
       name_fr: product.name_fr,
@@ -316,7 +743,7 @@ function ProductsManager() {
     setShowForm(true)
   }
 
-  const handleDeleteProduct = async (productId) => {
+  const handleDeleteProduct = async (productId: number) => {
     if (deleteConfirm !== productId) {
       setDeleteConfirm(productId)
       return
@@ -397,179 +824,284 @@ function ProductsManager() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Gestion des Produits</h2>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="btn-primary w-full sm:w-auto"
-        >
-          Ajouter un produit
-        </button>
+    <div className="p-6 space-y-6">
+      {/* Enhanced Header with Search and Filters */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+            <Icons.Products className="w-6 h-6 mr-2 text-primary-600" />
+            Gestion des Produits
+          </h2>
+          <p className="text-gray-600 mt-1">{filteredProducts.length} produit(s) affiché(s)</p>
+        </div>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full lg:w-auto">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="btn-primary flex items-center justify-center space-x-2"
+          >
+            <Icons.Plus className="w-4 h-4" />
+            <span>Ajouter un produit</span>
+          </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setViewMode('table')}
+              className={`p-2 rounded-lg ${viewMode === 'table' ? 'bg-primary-100 text-primary-600' : 'bg-gray-100 text-gray-600'}`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 6h18m-9 8h9m-9 4h9M3 14h6m-6 4h6" />
+              </svg>
+            </button>
+            <button
+              onClick={() => setViewMode('cards')}
+              className={`p-2 rounded-lg ${viewMode === 'cards' ? 'bg-primary-100 text-primary-600' : 'bg-gray-100 text-gray-600'}`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
+      {/* Search and Filters */}
+      <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="relative">
+            <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Rechercher par nom ou référence..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 input-field"
+            />
+          </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="input-field"
+          >
+            <option value="">Toutes les catégories</option>
+            {categories.map((category: any) => (
+              <option key={category.id} value={category.id}>
+                {category.name_fr}
+              </option>
+            ))}
+          </select>
+          <select
+            value={stockFilter}
+            onChange={(e) => setStockFilter(e.target.value)}
+            className="input-field"
+          >
+            <option value="all">Tout le stock</option>
+            <option value="available">En stock</option>
+            <option value="low">Stock faible (≤5)</option>
+            <option value="out">Rupture de stock</option>
+          </select>
+          <button
+            onClick={() => {
+              setSearchTerm('')
+              setSelectedCategory('')
+              setStockFilter('all')
+            }}
+            className="btn-secondary flex items-center justify-center space-x-2"
+          >
+            <Icons.X className="w-4 h-4" />
+            <span>Réinitialiser</span>
+          </button>
+        </div>
+      </div>
+      
+      {/* Product Form */}
       {showForm && (
-        <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
-            {editingProduct ? 'Modifier le Produit' : 'Nouveau Produit'}
-          </h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nom (Français)
-                </label>
-                <input
-                  type="text"
-                  value={formData.name_fr}
-                  onChange={(e) => setFormData({ ...formData, name_fr: e.target.value })}
-                  className="input-field"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nom (Arabe)
-                </label>
-                <input
-                  type="text"
-                  value={formData.name_ar}
-                  onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
-                  className="input-field arabic-text"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description (Français)
-              </label>
-              <textarea
-                value={formData.description_fr}
-                onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
-                rows={3}
-                className="input-field"
-                required
-              />
-            </div>
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description (Arabe)
-              </label>
-              <textarea
-                value={formData.description_ar}
-                onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
-                rows={3}
-                className="input-field arabic-text"
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Prix (TND)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="input-field"
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Stock
-              </label>
-              <input
-                type="number"
-                value={formData.stock}
-                onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                className="input-field"
-                required
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Catégorie
-              </label>
-              <select
-                value={formData.category_id}
-                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                className="input-field"
-                required
-              >
-                <option value="">Sélectionner une catégorie</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name_fr}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Référence
-              </label>
-              <input
-                type="text"
-                value={formData.reference}
-                onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
-                className="input-field"
-                required
-              />
-            </div>
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image du produit (optionnel)
-              </label>
+        <div className="bg-white rounded-lg shadow-lg border p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 flex items-center">
+              <Icons.Plus className="w-5 h-5 mr-2 text-primary-600" />
+              {editingProduct ? 'Modifier le Produit' : 'Nouveau Produit'}
+            </h3>
+            <button
+              onClick={() => {
+                setShowForm(false)
+                setEditingProduct(null)
+                resetForm()
+              }}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <Icons.X className="w-5 h-5 text-gray-500" />
+            </button>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Basic Information */}
               <div className="space-y-4">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="input-field"
-                  disabled={uploading}
-                />
-                {uploading && (
-                  <div className="flex items-center text-blue-600">
-                    <div className="loader w-4 h-4 mr-2"></div>
-                    Upload en cours...
-                  </div>
-                )}
-                {imagePreview && (
-                  <div className="mt-4">
-                    <p className="text-sm text-gray-600 mb-2">Aperçu de l'image:</p>
-                    <img 
-                      src={imagePreview} 
-                      alt="Aperçu" 
-                      className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
-                      onLoad={() => console.log('Image preview loaded successfully')}
-                      onError={(e) => {
-                        console.error('Error loading image preview:', imagePreview.substring(0, 50) + '...')
-                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCA2NkM0MCA1My44NDk3IDQ5Ljg0OTcgNDQgNjIgNDRDNzQuMTUwMyA0NCA4NCA1My44NDk3IDg0IDY2Qzg0IDc4LjE1MDMgNzQuMTUwMyA4OCA2MiA4OEM0OS44NDk3IDg4IDQwIDc4LjE1MDMgNDAgNjZaIiBmaWxsPSIjOUNBM0FGIi8+Cjx0ZXh0IHg9IjY0IiB5PSI3NCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNkI3Mjc5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5Ob24gdHJvdXbDqTwvdGV4dD4KPC9zdmc+'
-                      }}
+                <h4 className="font-medium text-gray-900 border-b pb-2">Informations de base</h4>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nom (Français) *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name_fr}
+                    onChange={(e) => setFormData({ ...formData, name_fr: e.target.value })}
+                    className="input-field"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nom (Arabe) *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name_ar}
+                    onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
+                    className="input-field arabic-text"
+                    required
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Prix (TND) *
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={formData.price}
+                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                      className="input-field"
+                      required
                     />
-                    <p className="text-xs text-gray-500 mt-2">
-                      Type: {imagePreview.startsWith('data:') ? 'Base64 image data' : 'File path'}
-                    </p>
                   </div>
-                )}
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Stock *
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.stock}
+                      onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Catégorie *
+                    </label>
+                    <select
+                      value={formData.category_id}
+                      onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                      className="input-field"
+                      required
+                    >
+                      <option value="">Sélectionner une catégorie</option>
+                      {categories.map((category: any) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name_fr}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Référence *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.reference}
+                      onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Descriptions and Image */}
+              <div className="space-y-4">
+                <h4 className="font-medium text-gray-900 border-b pb-2">Descriptions et Image</h4>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description (Français) *
+                  </label>
+                  <textarea
+                    value={formData.description_fr}
+                    onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
+                    rows={3}
+                    className="input-field"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description (Arabe) *
+                  </label>
+                  <textarea
+                    value={formData.description_ar}
+                    onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
+                    rows={3}
+                    className="input-field arabic-text"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Image du produit
+                  </label>
+                  <div className="space-y-4">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="input-field"
+                      disabled={uploading}
+                    />
+                    {uploading && (
+                      <div className="flex items-center text-blue-600">
+                        <div className="loader w-4 h-4 mr-2"></div>
+                        Upload en cours...
+                      </div>
+                    )}
+                    {imagePreview && (
+                      <div className="flex items-center space-x-4">
+                        <img 
+                          src={imagePreview} 
+                          alt="Aperçu" 
+                          className="w-24 h-24 object-cover rounded-lg border-2 border-gray-200"
+                        />
+                        <div className="flex-1">
+                          <p className="text-sm text-gray-600 mb-2">Aperçu de l'image</p>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setImagePreview('')
+                              setFormData(prev => ({ ...prev, image_url: '' }))
+                            }}
+                            className="text-red-600 hover:text-red-800 text-sm"
+                          >
+                            Supprimer l'image
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
-              <button type="submit" className="btn-primary w-full sm:w-auto">
-                {editingProduct ? 'Modifier le produit' : 'Ajouter le produit'}
-              </button>
+            <div className="flex justify-end space-x-4 pt-6 border-t">
               <button
                 type="button"
                 onClick={() => {
@@ -577,140 +1109,155 @@ function ProductsManager() {
                   setEditingProduct(null)
                   resetForm()
                 }}
-                className="btn-secondary w-full sm:w-auto"
+                className="btn-secondary"
               >
                 Annuler
+              </button>
+              <button type="submit" className="btn-primary">
+                {editingProduct ? 'Modifier le produit' : 'Ajouter le produit'}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Products List */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        {/* Desktop Table */}
-        <div className="hidden lg:block">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Produit
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Description
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Prix
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Stock
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Catégorie
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Référence
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Image
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-            {products.map((product) => (
-              <tr key={product.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      FR: {product.name_fr}
+      {/* Products Display */}
+      {viewMode === 'table' ? (
+        <ProductsTable 
+          products={filteredProducts}
+          onEdit={handleEditProduct}
+          onDelete={handleDeleteProduct}
+          deleteConfirm={deleteConfirm}
+        />
+      ) : (
+        <ProductsCards 
+          products={filteredProducts}
+          onEdit={handleEditProduct}
+          onDelete={handleDeleteProduct}
+          deleteConfirm={deleteConfirm}
+        />
+      )}
+    </div>
+  )
+}
+
+// Products Table Component
+function ProductsTable({ products, onEdit, onDelete, deleteConfirm }: any) {
+  return (
+    <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Produit
+              </th>
+              <th className="hidden lg:table-cell px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Description
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Prix
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Stock
+              </th>
+              <th className="hidden md:table-cell px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Catégorie
+              </th>
+              <th className="hidden xl:table-cell px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Image
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {products.map((product: any) => (
+              <tr key={product.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 flex-shrink-0">
+                      {product.image_url ? (
+                        <img 
+                          src={product.image_url} 
+                          alt={product.name_fr}
+                          className="w-12 h-12 object-cover rounded-lg border border-gray-200"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                          <Icons.Products className="w-6 h-6 text-gray-400" />
+                        </div>
+                      )}
                     </div>
-                    <div className="text-sm text-gray-500 arabic-text">
-                      AR: {product.name_ar}
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{product.name_fr}</div>
+                      <div className="text-sm text-gray-500 arabic-text">{product.name_ar}</div>
+                      <div className="text-xs text-gray-400">#{product.reference}</div>
                     </div>
+                  </div>
+                </td>
+                <td className="hidden lg:table-cell px-6 py-4 max-w-xs">
+                  <div className="text-sm text-gray-900 truncate" title={product.description_fr}>
+                    {product.description_fr}
+                  </div>
+                  <div className="text-sm text-gray-600 arabic-text truncate" title={product.description_ar}>
+                    {product.description_ar}
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div>
-                    <div className="text-sm text-gray-900 mb-1">
-                      <span className="font-medium">FR:</span> {product.description_fr}
-                    </div>
-                    <div className="text-sm text-gray-600 arabic-text">
-                      <span className="font-medium">AR:</span> {product.description_ar}
-                    </div>
-                  </div>
+                  <div className="text-sm font-semibold text-gray-900">{product.price} TND</div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {product.price} TND
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    product.stock > 0 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-red-100 text-red-800'
+                <td className="px-6 py-4">
+                  <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                    product.stock === 0 
+                      ? 'bg-red-100 text-red-800' 
+                      : product.stock <= 5
+                        ? 'bg-orange-100 text-orange-800'
+                        : 'bg-green-100 text-green-800'
                   }`}>
-                    {product.stock}
+                    {product.stock} {product.stock <= 1 ? 'unité' : 'unités'}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div className="text-sm text-gray-900">
-                      FR: {product.category_name_fr}
-                    </div>
-                    <div className="text-sm text-gray-600 arabic-text">
-                      AR: {product.category_name_ar}
-                    </div>
-                  </div>
+                <td className="hidden md:table-cell px-6 py-4">
+                  <div className="text-sm text-gray-900">{product.category_name_fr}</div>
+                  <div className="text-sm text-gray-600 arabic-text">{product.category_name_ar}</div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {product.reference}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                <td className="hidden xl:table-cell px-6 py-4">
                   {product.image_url ? (
                     <img 
                       src={product.image_url} 
-                      alt="Product"
+                      alt={product.name_fr}
                       className="w-16 h-16 object-cover rounded-lg border border-gray-200"
-                      onError={(e) => {
-                        console.error('Failed to load product image for product:', product.name_fr)
-                        e.currentTarget.style.display = 'none'
-                      }}
                     />
-                  ) : null}
-                  {(!product.image_url || product.image_url === '') && (
+                  ) : (
                     <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
+                      <Icons.Products className="w-8 h-8 text-gray-400" />
                     </div>
                   )}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-2">
+                <td className="px-6 py-4">
+                  <div className="flex items-center space-x-2">
                     <button
-                      onClick={() => handleEditProduct(product)}
-                      className="text-blue-600 hover:text-blue-900"
+                      onClick={() => onEdit(product)}
+                      className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Modifier"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
+                      <Icons.Edit className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => handleDeleteProduct(product.id)}
-                      className={`${
+                      onClick={() => onDelete(product.id)}
+                      className={`p-2 rounded-lg transition-colors ${
                         deleteConfirm === product.id 
-                          ? 'text-red-800 bg-red-100 px-2 py-1 rounded' 
-                          : 'text-red-600 hover:text-red-900'
+                          ? 'text-white bg-red-600 hover:bg-red-700' 
+                          : 'text-red-600 hover:text-red-800 hover:bg-red-50'
                       }`}
+                      title={deleteConfirm === product.id ? 'Confirmer la suppression' : 'Supprimer'}
                     >
                       {deleteConfirm === product.id ? (
-                        <span className="text-xs">Confirmer?</span>
+                        <Icons.Check className="w-4 h-4" />
                       ) : (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
+                        <Icons.Delete className="w-4 h-4" />
                       )}
                     </button>
                   </div>
@@ -719,93 +1266,92 @@ function ProductsManager() {
             ))}
           </tbody>
         </table>
+      </div>
+      {products.length === 0 && (
+        <div className="text-center py-12">
+          <Icons.Products className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600">Aucun produit trouvé</p>
         </div>
+      )}
+    </div>
+  )
+}
 
-        {/* Mobile Cards */}
-        <div className="lg:hidden">
-          {products.map((product) => (
-            <div key={product.id} className="border-b border-gray-200 p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    {product.image_url ? (
-                      <img 
-                        src={product.image_url} 
-                        alt="Product"
-                        className="h-12 w-12 object-cover rounded"
-                        onError={(e) => {
-                          console.error('Failed to load product image for product:', product.name_fr);
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <div className="h-12 w-12 bg-gray-200 rounded flex items-center justify-center">
-                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    )}
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900">{product.name_fr}</h3>
-                      <p className="text-sm text-gray-500 arabic-text">{product.name_ar}</p>
-                    </div>
+// Products Cards Component
+function ProductsCards({ products, onEdit, onDelete, deleteConfirm }: any) {
+  return (
+    <div>
+      {products.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.map((product: any) => (
+            <div key={product.id} className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow">
+              {/* Product Image */}
+              <div className="aspect-w-1 aspect-h-1 bg-gray-200">
+                {product.image_url ? (
+                  <img 
+                    src={product.image_url} 
+                    alt={product.name_fr}
+                    className="w-full h-48 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-100 flex items-center justify-center">
+                    <Icons.Products className="w-16 h-16 text-gray-400" />
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="font-medium text-gray-500">Prix:</span>
-                      <p className="text-gray-900">{product.price} TND</p>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-500">Stock:</span>
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        product.stock > 0 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {product.stock}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-500">Catégorie:</span>
-                      <p className="text-gray-900">{product.category_name_fr || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <span className="font-medium text-gray-500">Référence:</span>
-                      <p className="text-gray-900">{product.reference}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-2">
-                    <span className="font-medium text-gray-500">Description:</span>
-                    <p className="text-sm text-gray-900 mt-1">{product.description_fr}</p>
-                    <p className="text-sm text-gray-600 arabic-text mt-1">{product.description_ar}</p>
-                  </div>
+                )}
+                
+                {/* Stock Status Badge */}
+                <div className="absolute top-3 right-3">
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    product.stock === 0 
+                      ? 'bg-red-100 text-red-800' 
+                      : product.stock <= 5
+                        ? 'bg-orange-100 text-orange-800'
+                        : 'bg-green-100 text-green-800'
+                  }`}>
+                    {product.stock}
+                  </span>
+                </div>
+              </div>
+              
+              {/* Product Info */}
+              <div className="p-4">
+                <div className="mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{product.name_fr}</h3>
+                  <p className="text-sm text-gray-600 arabic-text">{product.name_ar}</p>
+                  <p className="text-xs text-gray-500 mt-1">#{product.reference}</p>
                 </div>
                 
-                <div className="flex flex-col space-y-2 ml-4">
+                <div className="mb-3">
+                  <p className="text-sm text-gray-700 line-clamp-2">{product.description_fr}</p>
+                </div>
+                
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xl font-bold text-primary-600">{product.price} TND</span>
+                  <span className="text-sm text-gray-600">{product.category_name_fr}</span>
+                </div>
+                
+                {/* Actions */}
+                <div className="flex space-x-2">
                   <button
-                    onClick={() => handleEditProduct(product)}
-                    className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded"
+                    onClick={() => onEdit(product)}
+                    className="flex-1 btn-primary flex items-center justify-center space-x-2 text-sm py-2"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
+                    <Icons.Edit className="w-4 h-4" />
+                    <span>Modifier</span>
                   </button>
                   <button
-                    onClick={() => handleDeleteProduct(product.id)}
-                    className={`p-2 rounded ${
+                    onClick={() => onDelete(product.id)}
+                    className={`px-3 py-2 rounded-lg transition-colors ${
                       deleteConfirm === product.id 
-                        ? 'text-red-800 bg-red-100' 
-                        : 'text-red-600 hover:text-red-900 hover:bg-red-50'
+                        ? 'text-white bg-red-600 hover:bg-red-700' 
+                        : 'text-red-600 hover:text-red-800 hover:bg-red-50 border border-red-200'
                     }`}
+                    title={deleteConfirm === product.id ? 'Confirmer' : 'Supprimer'}
                   >
                     {deleteConfirm === product.id ? (
-                      <span className="text-xs">OK?</span>
+                      <Icons.Check className="w-4 h-4" />
                     ) : (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
+                      <Icons.Delete className="w-4 h-4" />
                     )}
                   </button>
                 </div>
@@ -813,7 +1359,13 @@ function ProductsManager() {
             </div>
           ))}
         </div>
-      </div>
+      ) : (
+        <div className="text-center py-12">
+          <Icons.Products className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">Aucun produit trouvé</p>
+          <p className="text-gray-500 text-sm mt-2">Essayez de modifier vos filtres de recherche</p>
+        </div>
+      )}
     </div>
   )
 }
@@ -823,6 +1375,7 @@ function CategoriesManager() {
   const [showForm, setShowForm] = useState(false)
   const [editingCategory, setEditingCategory] = useState(null)
   const [deleteConfirm, setDeleteConfirm] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
   const [formData, setFormData] = useState({
     name_fr: '',
     name_ar: '',
@@ -833,6 +1386,11 @@ function CategoriesManager() {
   useEffect(() => {
     fetchCategories()
   }, [])
+
+  const filteredCategories = categories.filter((category: any) =>
+    category.name_fr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    category.name_ar.includes(searchTerm)
+  )
 
   const fetchCategories = async () => {
     try {
@@ -850,7 +1408,7 @@ function CategoriesManager() {
     e.preventDefault()
     
     try {
-      const url = editingCategory ? `/api/categories/${editingCategory.id}` : '/api/categories'
+      const url = editingCategory ? `/api/categories/${(editingCategory as any).id}` : '/api/categories'
       const method = editingCategory ? 'PUT' : 'POST'
       
       const response = await fetch(url, {
@@ -880,7 +1438,7 @@ function CategoriesManager() {
     }
   }
 
-  const handleEditCategory = (category) => {
+  const handleEditCategory = (category: any) => {
     setEditingCategory(category)
     setFormData({
       name_fr: category.name_fr,
@@ -891,7 +1449,7 @@ function CategoriesManager() {
     setShowForm(true)
   }
 
-  const handleDeleteCategory = async (categoryId) => {
+  const handleDeleteCategory = async (categoryId: number) => {
     if (deleteConfirm !== categoryId) {
       setDeleteConfirm(categoryId)
       return
@@ -899,522 +1457,173 @@ function CategoriesManager() {
 
     try {
       const response = await fetch(`/api/categories/${categoryId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       })
+
+      const data = await response.json()
 
       if (response.ok) {
         toast.success('Catégorie supprimée avec succès!')
         fetchCategories()
         setDeleteConfirm(null)
       } else {
-        toast.error('Erreur lors de la suppression de la catégorie')
+        // Handle specific error messages from the server
+        if (response.status === 400 && data.error) {
+          toast.error(data.error)
+        } else if (response.status === 404) {
+          toast.error('Catégorie non trouvée')
+        } else {
+          toast.error(data.error || 'Erreur lors de la suppression de la catégorie')
+        }
+        setDeleteConfirm(null)
       }
     } catch (error) {
+      console.error('Error deleting category:', error)
       toast.error('Erreur lors de la suppression de la catégorie')
+      setDeleteConfirm(null)
     }
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Gestion des Catégories</h2>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="btn-primary"
-        >
-          Ajouter une catégorie
-        </button>
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+            <Icons.Categories className="w-6 h-6 mr-2 text-primary-600" />
+            Gestion des Catégories
+          </h2>
+          <p className="text-gray-600 mt-1">{filteredCategories.length} catégorie(s) affichée(s)</p>
+        </div>
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full lg:w-auto">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="btn-primary flex items-center justify-center space-x-2"
+          >
+            <Icons.Plus className="w-4 h-4" />
+            <span>Ajouter une catégorie</span>
+          </button>
+        </div>
       </div>
 
+      {/* Search */}
+      <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="relative max-w-md">
+          <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Rechercher une catégorie..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 input-field"
+          />
+        </div>
+      </div>
+
+      {/* Category Form */}
       {showForm && (
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
-            {editingCategory ? 'Modifier la Catégorie' : 'Nouvelle Catégorie'}
-          </h3>
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom (Français)
-              </label>
-              <input
-                type="text"
-                value={formData.name_fr}
-                onChange={(e) => setFormData({ ...formData, name_fr: e.target.value })}
-                className="input-field"
-                required
-              />
+        <div className="bg-white rounded-lg shadow-lg border p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-semibold text-gray-900 flex items-center">
+              <Icons.Plus className="w-5 h-5 mr-2 text-primary-600" />
+              {editingCategory ? 'Modifier la Catégorie' : 'Nouvelle Catégorie'}
+            </h3>
+            <button
+              onClick={() => {
+                setShowForm(false)
+                setEditingCategory(null)
+                setFormData({
+                  name_fr: '',
+                  name_ar: '',
+                  description_fr: '',
+                  description_ar: ''
+                })
+              }}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <Icons.X className="w-5 h-5 text-gray-500" />
+            </button>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom (Français) *
+                </label>
+                <input
+                  type="text"
+                  value={formData.name_fr}
+                  onChange={(e) => setFormData({ ...formData, name_fr: e.target.value })}
+                  className="input-field"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom (Arabe) *
+                </label>
+                <input
+                  type="text"
+                  value={formData.name_ar}
+                  onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
+                  className="input-field arabic-text"
+                  required
+                />
+              </div>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom (Arabe)
-              </label>
-              <input
-                type="text"
-                value={formData.name_ar}
-                onChange={(e) => setFormData({ ...formData, name_ar: e.target.value })}
-                className="input-field arabic-text"
-                required
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description (Français)
+                </label>
+                <textarea
+                  value={formData.description_fr}
+                  onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
+                  rows={4}
+                  className="input-field"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description (Arabe)
+                </label>
+                <textarea
+                  value={formData.description_ar}
+                  onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
+                  rows={4}
+                  className="input-field arabic-text"
+                />
+              </div>
             </div>
             
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description (Français)
-              </label>
-              <textarea
-                value={formData.description_fr}
-                onChange={(e) => setFormData({ ...formData, description_fr: e.target.value })}
-                rows={3}
-                className="input-field"
-              />
-            </div>
-            
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description (Arabe)
-              </label>
-              <textarea
-                value={formData.description_ar}
-                onChange={(e) => setFormData({ ...formData, description_ar: e.target.value })}
-                rows={3}
-                className="input-field arabic-text"
-              />
-            </div>
-            
-            <div className="md:col-span-2 flex space-x-4">
-              <button type="submit" className="btn-primary">
-                {editingCategory ? 'Modifier la catégorie' : 'Ajouter la catégorie'}
-              </button>
+            <div className="flex justify-end pt-6 border-t border-gray-200">
               <button
-                type="button"
-                onClick={() => {
-                  setShowForm(false)
-                  setEditingCategory(null)
-                  setFormData({
-                    name_fr: '',
-                    name_ar: '',
-                    description_fr: '',
-                    description_ar: ''
-                  })
-                }}
-                className="btn-secondary"
+                type="submit"
+                disabled={saving}
+                className="btn-primary flex items-center space-x-2"
               >
-                Annuler
+                {saving ? (
+                  <>
+                    <div className="loader w-4 h-4"></div>
+                    <span>Sauvegarde...</span>
+                  </>
+                ) : (
+                  <>
+                    <Icons.Check className="w-4 h-4" />
+                    <span>Sauvegarder les paramètres</span>
+                  </>
+                )}
               </button>
             </div>
           </form>
         </div>
-      )}
-
-      {/* Categories List */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        {/* Desktop Table */}
-        <div className="hidden md:block">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Nom de la Catégorie
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Description
-                </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {categories.map((category) => (
-              <tr key={category.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      FR: {category.name_fr}
-                    </div>
-                    <div className="text-sm text-gray-500 arabic-text">
-                      AR: {category.name_ar}
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div>
-                    <div className="text-sm text-gray-900 mb-1">
-                      <span className="font-medium">FR:</span> {category.description_fr}
-                    </div>
-                    <div className="text-sm text-gray-600 arabic-text">
-                      <span className="font-medium">AR:</span> {category.description_ar}
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleEditCategory(category)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button
-                      onClick={() => handleDeleteCategory(category.id)}
-                      className={`${
-                        deleteConfirm === category.id 
-                          ? 'text-red-800 bg-red-100 px-2 py-1 rounded' 
-                          : 'text-red-600 hover:text-red-900'
-                      }`}
-                    >
-                      {deleteConfirm === category.id ? (
-                        <span className="text-xs">Confirmer?</span>
-                      ) : (
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        </div>
-
-        {/* Mobile Cards */}
-        <div className="md:hidden">
-          {categories.map((category) => (
-            <div key={category.id} className="border-b border-gray-200 p-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="mb-3">
-                    <h3 className="text-sm font-medium text-gray-900">{category.name_fr}</h3>
-                    <p className="text-sm text-gray-500 arabic-text">{category.name_ar}</p>
-                  </div>
-                  
-                  <div className="text-sm">
-                    <span className="font-medium text-gray-500">Description:</span>
-                    <p className="text-gray-900 mt-1">{category.description_fr}</p>
-                    <p className="text-gray-600 arabic-text mt-1">{category.description_ar}</p>
-                  </div>
-                </div>
-                
-                <div className="flex flex-col space-y-2 ml-4">
-                  <button
-                    onClick={() => handleEditCategory(category)}
-                    className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={() => handleDeleteCategory(category.id)}
-                    className={`p-2 rounded ${
-                      deleteConfirm === category.id 
-                        ? 'text-red-800 bg-red-100' 
-                        : 'text-red-600 hover:text-red-900 hover:bg-red-50'
-                    }`}
-                  >
-                    {deleteConfirm === category.id ? (
-                      <span className="text-xs">OK?</span>
-                    ) : (
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function MessagesManager() {
-  const [messages, setMessages] = useState([])
-
-  useEffect(() => {
-    fetchMessages()
-  }, [])
-
-  const fetchMessages = async () => {
-    try {
-      const response = await fetch('/api/admin/messages')
-      if (response.ok) {
-        const data = await response.json()
-        setMessages(data)
-      }
-    } catch (error) {
-      console.error('Error fetching messages:', error)
-    }
-  }
-
-  return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Messages de Contact</h2>
-
-      <div className="bg-white shadow rounded-lg overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Contact
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Type
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Message
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {messages.map((message) => (
-              <tr key={message.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {message.name}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {message.email}
-                  </div>
-                  {message.phone && (
-                    <div className="text-sm text-gray-500">
-                      {message.phone}
-                    </div>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    message.type === 'appointment' 
-                      ? 'bg-blue-100 text-blue-800' 
-                      : 'bg-green-100 text-green-800'
-                  }`}>
-                    {message.type === 'appointment' ? 'Rendez-vous' : 'Question'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
-                  {message.message}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(message.created_at).toLocaleDateString('fr-FR')}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-}
-
-function ForgotPasswordLink() {
-  const [showForm, setShowForm] = useState(false)
-  const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    
-    try {
-      const response = await fetch('/api/admin/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      })
-
-      const data = await response.json()
-      
-      if (response.ok) {
-        toast.success(data.message)
-        setShowForm(false)
-        setEmail('')
-      } else {
-        toast.error(data.error)
-      }
-    } catch (error) {
-      toast.error('Erreur lors de l\'envoi')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (!showForm) {
-    return (
-      <button
-        onClick={() => setShowForm(true)}
-        className="text-primary-600 hover:text-primary-800 text-sm"
-      >
-        Mot de passe oublié ?
-      </button>
-    )
-  }
-
-  return (
-    <div className="mt-4">
-      <form onSubmit={handleForgotPassword} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="input-field"
-            required
-          />
-        </div>
-        <div className="flex space-x-2">
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="btn-primary text-sm px-4 py-2"
-          >
-            {loading ? 'Envoi...' : 'Envoyer'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowForm(false)}
-            className="btn-secondary text-sm px-4 py-2"
-          >
-            Annuler
-          </button>
-        </div>
-      </form>
-    </div>
-  )
-}
-
-function PasswordManager() {
-  const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  })
-  const [loading, setLoading] = useState(false)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (formData.newPassword !== formData.confirmPassword) {
-      toast.error('Les nouveaux mots de passe ne correspondent pas')
-      return
-    }
-
-    if (formData.newPassword.length < 6) {
-      toast.error('Le nouveau mot de passe doit contenir au moins 6 caractères')
-      return
-    }
-
-    setLoading(true)
-    
-    try {
-      const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}')
-      const response = await fetch('/api/admin/change-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          currentPassword: formData.currentPassword,
-          newPassword: formData.newPassword,
-          email: adminUser.email
-        }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        toast.success(data.message)
-        setFormData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        })
-      } else {
-        toast.error(data.error)
-      }
-    } catch (error) {
-      toast.error('Erreur lors du changement de mot de passe')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Changer le mot de passe</h2>
-      
-      <div className="bg-white p-6 rounded-lg shadow max-w-md">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Mot de passe actuel
-            </label>
-            <input
-              type="password"
-              value={formData.currentPassword}
-              onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-              className="input-field"
-              required
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nouveau mot de passe
-            </label>
-            <input
-              type="password"
-              value={formData.newPassword}
-              onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-              className="input-field"
-              required
-              minLength={6}
-            />
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Confirmer le nouveau mot de passe
-            </label>
-            <input
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="input-field"
-              required
-              minLength={6}
-            />
-          </div>
-          
-          <button 
-            type="submit"
-            disabled={loading}
-            className="btn-primary flex items-center justify-center"
-          >
-            {loading ? (
-              <>
-                <div className="loader w-4 h-4 mr-2"></div>
-                Changement...
-              </>
-            ) : (
-              'Changer le mot de passe'
-            )}
-          </button>
-        </form>
       </div>
     </div>
   )
