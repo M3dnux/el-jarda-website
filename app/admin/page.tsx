@@ -1725,28 +1725,404 @@ function ForgotPasswordLink() {
 }
 
 function MessagesManager() {
+  const [messages, setMessages] = useState([])
+  
+  useEffect(() => {
+    fetchMessages()
+  }, [])
+  
+  const fetchMessages = async () => {
+    try {
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch('/api/admin/messages')
+      if (response && response.ok) {
+        const data = await response.json()
+        setMessages(data)
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error)
+    }
+  }
+  
   return (
-    <div className="p-4">
-      <h3 className="text-lg font-semibold mb-4">Gestion des Messages</h3>
-      <p className="text-gray-600">Fonctionnalité de gestion des messages en cours de développement.</p>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-gray-900">Messages de Contact</h2>
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Contact
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Type
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Message
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Date
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {messages.map((message: any) => (
+              <tr key={message.id}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">
+                    {message.name}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {message.email}
+                  </div>
+                  {message.phone && (
+                    <div className="text-sm text-gray-500">
+                      {message.phone}
+                    </div>
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    message.type === 'appointment'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-green-100 text-green-800'
+                  }`}>
+                    {message.type === 'appointment' ? 'Rendez-vous' : 'Question'}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                  {message.message}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(message.created_at).toLocaleDateString('fr-FR')}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
 
 function DatabaseOverview() {
+  const [dbStats, setDbStats] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [expandedTables, setExpandedTables] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    fetchDatabaseStats()
+  }, [])
+
+  const fetchDatabaseStats = async () => {
+    try {
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch('/api/admin/database')
+      if (response && response.ok) {
+        const data = await response.json()
+        setDbStats(data)
+      } else {
+        toast.error('Erreur lors du chargement des statistiques')
+      }
+    } catch (error) {
+      console.error('Error fetching database stats:', error)
+      toast.error('Erreur lors du chargement des statistiques')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const toggleTableDetails = (tableName: string) => {
+    const newExpanded = new Set(expandedTables)
+    if (newExpanded.has(tableName)) {
+      newExpanded.delete(tableName)
+    } else {
+      newExpanded.add(tableName)
+    }
+    setExpandedTables(newExpanded)
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow">
+        <div className="flex items-center justify-center">
+          <div className="loader w-6 h-6"></div>
+          <span className="ml-2">Chargement des statistiques...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (!dbStats) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow">
+        <div className="text-center text-red-600">
+          <Icons.Database className="w-12 h-12 mx-auto mb-4" />
+          <p>Impossible de charger les statistiques de la base de données</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="p-4">
-      <h3 className="text-lg font-semibold mb-4">Aperçu de la Base de Données</h3>
-      <p className="text-gray-600">Statistiques et aperçu de la base de données.</p>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+          <Icons.Database className="w-6 h-6 mr-2" />
+          Aperçu de la Base de Données
+        </h2>
+        <button
+          onClick={fetchDatabaseStats}
+          className="btn-secondary flex items-center space-x-2"
+        >
+          <Icons.TrendUp className="w-4 h-4" />
+          <span>Actualiser</span>
+        </button>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white p-6 rounded-lg shadow">
+          <div className="flex items-center">
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <Icons.Database className="w-8 h-8 text-blue-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-500">Total des Tables</p>
+              <p className="text-2xl font-bold text-gray-900">{dbStats.summary.totalTables}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow">
+          <div className="flex items-center">
+            <div className="p-3 bg-green-100 rounded-lg">
+              <Icons.TrendUp className="w-8 h-8 text-green-600" />
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-500">Total des Enregistrements</p>
+              <p className="text-2xl font-bold text-gray-900">{dbStats.summary.totalRows.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tables List */}
+      <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+          <h3 className="text-lg font-medium text-gray-900">Tables de la Base de Données</h3>
+        </div>
+        <div className="divide-y divide-gray-200">
+          {dbStats.tables.map((table: any) => (
+            <div key={table.name} className="p-6">
+              <div 
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => toggleTableDetails(table.name)}
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="p-2 bg-gray-100 rounded">
+                    <Icons.Database className="w-5 h-5 text-gray-600" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-900">{table.name}</h4>
+                    <p className="text-sm text-gray-500">
+                      {table.rowCount.toLocaleString()} ligne{table.rowCount !== 1 ? 's' : ''} • {table.columns} colonne{table.columns !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <span className="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-800">
+                    {table.rowCount.toLocaleString()} lignes
+                  </span>
+                  <button className="text-gray-400 hover:text-gray-600">
+                    {expandedTables.has(table.name) ? (
+                      <Icons.X className="w-5 h-5" />
+                    ) : (
+                      <Icons.Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Table Details */}
+              {expandedTables.has(table.name) && (
+                <div className="mt-4 bg-gray-50 rounded-lg p-4">
+                  <h5 className="text-sm font-medium text-gray-900 mb-3">Structure des Colonnes</h5>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead>
+                        <tr>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Nom
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Type
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Nullable
+                          </th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Défaut
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {table.columnDetails.map((column: any, index: number) => (
+                          <tr key={index} className="bg-white">
+                            <td className="px-3 py-2 text-sm font-medium text-gray-900">
+                              {column.column_name}
+                            </td>
+                            <td className="px-3 py-2 text-sm text-gray-500">
+                              {column.data_type}
+                            </td>
+                            <td className="px-3 py-2 text-sm text-gray-500">
+                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                column.is_nullable === 'YES' 
+                                  ? 'bg-yellow-100 text-yellow-800' 
+                                  : 'bg-green-100 text-green-800'
+                              }`}>
+                                {column.is_nullable === 'YES' ? 'Oui' : 'Non'}
+                              </span>
+                            </td>
+                            <td className="px-3 py-2 text-sm text-gray-500">
+                              {column.column_default || '-'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
 
 function PasswordManager() {
+  const [formData, setFormData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [loading, setLoading] = useState(false)
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      toast.error('Les nouveaux mots de passe ne correspondent pas')
+      return
+    }
+    if (formData.newPassword.length < 6) {
+      toast.error('Le nouveau mot de passe doit contenir au moins 6 caractères')
+      return
+    }
+    setLoading(true)
+
+    try {
+      const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}')
+      const authenticatedFetch = createAuthenticatedFetch()
+      const response = await authenticatedFetch('/api/admin/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
+          email: adminUser.email
+        }),
+      })
+      
+      if (response) {
+        const data = await response.json()
+        if (response.ok) {
+          toast.success(data.message)
+          setFormData({
+            currentPassword: '',
+            newPassword: '',
+            confirmPassword: ''
+          })
+        } else {
+          toast.error(data.error)
+        }
+      }
+    } catch (error) {
+      toast.error('Erreur lors du changement de mot de passe')
+    } finally {
+      setLoading(false)
+    }
+  }
+  
   return (
-    <div className="p-4">
-      <h3 className="text-lg font-semibold mb-4">Gestion du Mot de Passe</h3>
-      <p className="text-gray-600">Fonctionnalité de changement de mot de passe en cours de développement.</p>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-gray-900">Changer le mot de passe</h2>
+
+      <div className="bg-white p-6 rounded-lg shadow max-w-md">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Mot de passe actuel
+            </label>
+            <input
+              type="password"
+              value={formData.currentPassword}
+              onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
+              className="input-field"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nouveau mot de passe
+            </label>
+            <input
+              type="password"
+              value={formData.newPassword}
+              onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+              className="input-field"
+              required
+              minLength={6}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Confirmer le nouveau mot de passe
+            </label>
+            <input
+              type="password"
+              value={formData.confirmPassword}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              className="input-field"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full btn-primary flex items-center justify-center space-x-2"
+          >
+            {loading ? (
+              <>
+                <div className="loader w-4 h-4"></div>
+                <span>Changement en cours...</span>
+              </>
+            ) : (
+              <>
+                <Icons.Password className="w-4 h-4" />
+                <span>Changer le mot de passe</span>
+              </>
+            )}
+          </button>
+        </form>
+      </div>
     </div>
   )
 }
