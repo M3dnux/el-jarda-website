@@ -538,3 +538,104 @@ footer [dir="rtl"] .arabic-text {
 .stats-change.neutral {
   @apply text-gray-600;
 }
+
+/* Mobile Admin Panel Enhancements */
+@layer utilities {
+  /* Touch-friendly buttons */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Better mobile tables */
+  @media (max-width: 768px) {
+    .mobile-table-wrapper {
+      @apply -mx-4;
+    }
+    
+    .mobile-table-wrapper table {
+      @apply text-sm;
+    }
+    
+    .mobile-table-wrapper th,
+    .mobile-table-wrapper td {
+      @apply px-3 py-2;
+    }
+    
+    /* Hide less important columns on mobile */
+    .hide-mobile {
+      @apply hidden md:table-cell;
+    }
+    
+    /* Stack form elements vertically on mobile */
+    .mobile-form-stack {
+      @apply flex-col space-y-3 space-x-0;
+    }
+    
+    /* Better mobile padding */
+    .mobile-p-safe {
+      @apply px-4 py-3;
+    }
+  }
+  
+  /* Improved button sizing for mobile */
+  @media (max-width: 640px) {
+    .btn-primary,
+    .btn-secondary {
+      @apply px-4 py-3 text-sm min-h-[44px] flex items-center justify-center;
+    }
+    
+    /* Better mobile input sizing */
+    .input-field {
+      @apply px-4 py-3 text-base min-h-[44px];
+    }
+    
+    /* Mobile-friendly select dropdowns */
+    select.input-field {
+      @apply text-base min-h-[44px];
+    }
+  }
+  
+  /* Scrollable mobile tables */
+  .mobile-scroll-table {
+    @apply overflow-x-auto -mx-4 px-4;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+  }
+  
+  .mobile-scroll-table::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .mobile-scroll-table::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .mobile-scroll-table::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.3);
+    border-radius: 2px;
+  }
+  
+  /* Mobile-friendly modals */
+  @media (max-width: 640px) {
+    .mobile-modal {
+      @apply inset-x-4 inset-y-8 max-w-none;
+    }
+  }
+  
+  /* Better mobile spacing */
+  .mobile-space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1rem;
+  }
+  
+  /* Mobile card improvements */
+  @media (max-width: 768px) {
+    .mobile-card {
+      @apply rounded-lg shadow-sm border p-4 mb-4;
+    }
+    
+    .mobile-card-grid {
+      @apply grid grid-cols-1 gap-4;
+    }
+  }
+}

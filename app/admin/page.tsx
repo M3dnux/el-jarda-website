@@ -301,7 +301,7 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-4 px-4 sm:py-6 sm:px-6 lg:px-8">
         <AdminDashboard />
       </main>
     </div>
@@ -371,10 +371,28 @@ function AdminDashboard() {
 
   return (
     <div>
-      {/* Enhanced Tab Navigation */}
-      <div className="mb-8">
+      {/* Enhanced Mobile-First Tab Navigation */}
+      <div className="mb-6 md:mb-8">
         <div className="border-b border-gray-200 bg-white rounded-t-lg shadow-sm">
-          <nav className="flex flex-wrap -mb-px px-4 overflow-x-auto">
+          {/* Mobile Tab Selector */}
+          <div className="block md:hidden px-4 py-3 border-b border-gray-100">
+            <select
+              value={activeTab}
+              onChange={(e) => setActiveTab(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            >
+              {tabs.map((tab) => (
+                <option key={tab.id} value={tab.id}>
+                  {tab.label}
+                  {tab.id === 'messages' && stats.recentMessages > 0 && ` (${stats.recentMessages})`}
+                  {tab.id === 'products' && stats.lowStockProducts > 0 && ` (${stats.lowStockProducts})`}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Desktop Tab Navigation */}
+          <nav className="hidden md:flex flex-wrap -mb-px px-4 overflow-x-auto">
             {tabs.map((tab) => {
               const Icon = tab.icon
               return (
@@ -501,16 +519,16 @@ function DashboardOverview({ stats, onRefresh, setActiveTab }: { stats: any, onR
   }
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-4 md:p-6 space-y-6 md:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-          <p className="text-gray-600 mt-1">Vue d'ensemble de votre magasin El Jarda</p>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Tableau de bord</h1>
+          <p className="text-gray-600 mt-1 text-sm md:text-base">Vue d'ensemble de votre magasin El Jarda</p>
         </div>
         <button
           onClick={onRefresh}
-          className="btn-primary flex items-center space-x-2"
+          className="btn-primary flex items-center space-x-2 w-full sm:w-auto justify-center"
         >
           <Icons.TrendUp className="w-4 h-4" />
           <span>Actualiser</span>
@@ -518,7 +536,7 @@ function DashboardOverview({ stats, onRefresh, setActiveTab }: { stats: any, onR
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {statCards.map((card, index) => {
           const colorClass = getColorClasses(card.color)
           const [bgColor, textColor, bgLight] = colorClass.split(' ')
@@ -549,41 +567,41 @@ function DashboardOverview({ stats, onRefresh, setActiveTab }: { stats: any, onR
       </div>
 
       {/* Quick Actions & Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-lg border border-gray-100">
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-4 md:p-6 border-b border-gray-100">
             <h3 className="text-lg font-semibold text-gray-900">Actions rapides</h3>
           </div>
-          <div className="p-6 space-y-3">
+          <div className="p-4 md:p-6 space-y-3">
             <button 
               onClick={() => setActiveTab('products')}
-              className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
+              className="w-full flex items-center space-x-3 p-3 md:p-4 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 touch-manipulation"
             >
-              <Icons.Plus className="w-5 h-5 text-blue-600" />
-              <div className="text-left">
-                <p className="font-medium text-gray-900">Ajouter un produit</p>
-                <p className="text-sm text-gray-600">Créer un nouveau produit</p>
+              <Icons.Plus className="w-5 h-5 text-blue-600 flex-shrink-0" />
+              <div className="text-left flex-1">
+                <p className="font-medium text-gray-900 text-sm md:text-base">Ajouter un produit</p>
+                <p className="text-xs md:text-sm text-gray-600">Créer un nouveau produit</p>
               </div>
             </button>
             <button 
               onClick={() => setActiveTab('categories')}
-              className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
+              className="w-full flex items-center space-x-3 p-3 md:p-4 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 touch-manipulation"
             >
-              <Icons.Categories className="w-5 h-5 text-green-600" />
-              <div className="text-left">
-                <p className="font-medium text-gray-900">Gérer les catégories</p>
-                <p className="text-sm text-gray-600">Organiser vos produits</p>
+              <Icons.Categories className="w-5 h-5 text-green-600 flex-shrink-0" />
+              <div className="text-left flex-1">
+                <p className="font-medium text-gray-900 text-sm md:text-base">Gérer les catégories</p>
+                <p className="text-xs md:text-sm text-gray-600">Organiser vos produits</p>
               </div>
             </button>
             <button 
               onClick={() => setActiveTab('settings')}
-              className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
+              className="w-full flex items-center space-x-3 p-3 md:p-4 rounded-lg hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 touch-manipulation"
             >
-              <Icons.Settings className="w-5 h-5 text-purple-600" />
-              <div className="text-left">
-                <p className="font-medium text-gray-900">Paramètres du site</p>
-                <p className="text-sm text-gray-600">Configurer votre site</p>
+              <Icons.Settings className="w-5 h-5 text-purple-600 flex-shrink-0" />
+              <div className="text-left flex-1">
+                <p className="font-medium text-gray-900 text-sm md:text-base">Paramètres du site</p>
+                <p className="text-xs md:text-sm text-gray-600">Configurer votre site</p>
               </div>
             </button>
           </div>
@@ -862,12 +880,12 @@ function ProductsManager() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Enhanced Header with Search and Filters */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center">
-            <Icons.Products className="w-6 h-6 mr-2 text-primary-600" />
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 flex items-center">
+            <Icons.Products className="w-5 h-5 md:w-6 md:h-6 mr-2 text-primary-600" />
             Gestion des Produits
           </h2>
           <p className="text-gray-600 mt-1">{filteredProducts.length} produit(s) affiché(s)</p>
@@ -903,8 +921,8 @@ function ProductsManager() {
 
       {/* Search and Filters */}
       <div className="bg-white rounded-lg shadow-sm border p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="relative">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="relative sm:col-span-2 lg:col-span-1">
             <Icons.Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
