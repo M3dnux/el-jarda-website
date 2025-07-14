@@ -409,7 +409,7 @@ function AdminDashboard() {
 
       {/* Tab Content */}
       <div className="bg-white rounded-lg shadow-sm min-h-[600px]">
-        {activeTab === 'dashboard' && <DashboardOverview stats={stats} onRefresh={fetchDashboardStats} />}
+        {activeTab === 'dashboard' && <DashboardOverview stats={stats} onRefresh={fetchDashboardStats} setActiveTab={setActiveTab} />}
         {activeTab === 'products' && <ProductsManager />}
         {activeTab === 'categories' && <CategoriesManager />}
         {activeTab === 'messages' && <MessagesManager />}
@@ -422,7 +422,7 @@ function AdminDashboard() {
 }
 
 // Enhanced Dashboard Overview Component
-function DashboardOverview({ stats, onRefresh }: { stats: any, onRefresh: () => void }) {
+function DashboardOverview({ stats, onRefresh, setActiveTab }: { stats: any, onRefresh: () => void, setActiveTab: (tab: string) => void }) {
   const [recentActivity, setRecentActivity] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -556,21 +556,30 @@ function DashboardOverview({ stats, onRefresh }: { stats: any, onRefresh: () => 
             <h3 className="text-lg font-semibold text-gray-900">Actions rapides</h3>
           </div>
           <div className="p-6 space-y-3">
-            <button className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+            <button 
+              onClick={() => setActiveTab('products')}
+              className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
+            >
               <Icons.Plus className="w-5 h-5 text-blue-600" />
               <div className="text-left">
                 <p className="font-medium text-gray-900">Ajouter un produit</p>
                 <p className="text-sm text-gray-600">Créer un nouveau produit</p>
               </div>
             </button>
-            <button className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+            <button 
+              onClick={() => setActiveTab('categories')}
+              className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
+            >
               <Icons.Categories className="w-5 h-5 text-green-600" />
               <div className="text-left">
                 <p className="font-medium text-gray-900">Gérer les catégories</p>
                 <p className="text-sm text-gray-600">Organiser vos produits</p>
               </div>
             </button>
-            <button className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200">
+            <button 
+              onClick={() => setActiveTab('settings')}
+              className="w-full flex items-center space-x-3 p-4 rounded-lg hover:bg-gray-50 transition-colors border border-gray-200"
+            >
               <Icons.Settings className="w-5 h-5 text-purple-600" />
               <div className="text-left">
                 <p className="font-medium text-gray-900">Paramètres du site</p>
