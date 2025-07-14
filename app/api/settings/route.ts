@@ -3,12 +3,6 @@ import sql from '../../../lib/db'
 import { validateAdminToken, createAuthResponse } from '../../../lib/middleware'
 
 export async function GET(request: NextRequest) {
-  // Validate admin token for reading settings
-  const authResult = await validateAdminToken(request)
-  if (!authResult.valid) {
-    return createAuthResponse(authResult.error || 'Non autorisé')
-  }
-
   try {
     const settings = await sql`
       SELECT key, value, description FROM settings
